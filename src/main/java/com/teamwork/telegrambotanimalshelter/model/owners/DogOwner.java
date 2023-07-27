@@ -1,8 +1,8 @@
 package com.teamwork.telegrambotanimalshelter.model.owners;
 
 import com.teamwork.telegrambotanimalshelter.model.animals.Dog;
-import jakarta.persistence.*;
 
+import javax.persistence.*;
 import java.util.List;
 /**
  * Класс владельцев собак

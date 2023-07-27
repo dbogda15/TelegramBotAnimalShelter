@@ -3,10 +3,10 @@ package com.teamwork.telegrambotanimalshelter.service.impl;
 import com.teamwork.telegrambotanimalshelter.model.animals.Dog;
 import com.teamwork.telegrambotanimalshelter.repository.DogRepository;
 import com.teamwork.telegrambotanimalshelter.service.DogService;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
+@Service
 public class DogServiceImpl implements DogService {
     private final DogRepository dogRepository;
     public DogServiceImpl(DogRepository dogRepository) {
