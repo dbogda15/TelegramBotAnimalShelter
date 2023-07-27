@@ -1,6 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.model.shelters;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 /**
  * Класс для хранения полезной информации о приюте для собак
