@@ -1,6 +1,7 @@
 package com.teamwork.telegrambotanimalshelter.model.animals;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.teamwork.telegrambotanimalshelter.exceptions.IncorrectArgumentException;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import lombok.AllArgsConstructor;
@@ -51,6 +52,12 @@ public class Animal {
         this.name = name;
         this.age = age;
         this.owner = owner;
+    }
+
+    public void setOwner(Owner owner) {
+        if(owner.getOwnerType().equals(this.getAnimalType())) {
+            this.owner = owner;
+        } else throw new IncorrectArgumentException("У одного владельца могут быть только однотипные животные");
     }
 
     @Override
