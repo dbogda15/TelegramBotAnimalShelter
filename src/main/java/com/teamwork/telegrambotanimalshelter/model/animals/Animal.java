@@ -1,7 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.model.animals;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.teamwork.telegrambotanimalshelter.exceptions.IncorrectArgumentException;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import lombok.AllArgsConstructor;
