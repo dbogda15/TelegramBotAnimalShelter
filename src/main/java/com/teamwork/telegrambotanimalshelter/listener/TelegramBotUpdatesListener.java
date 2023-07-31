@@ -4,6 +4,10 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.Keyboard;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
+import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
@@ -21,6 +25,7 @@ import java.util.regex.Matcher;
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
+    private static String GREETINGS_MESSAGE;
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     private TelegramBot telegramBot;
@@ -54,11 +59,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     sendMessage(chatId,
                             " Здравствуйте, здесь вы сможете узнать о приюте,как его забрать и ухаживать за ним. ");
                 }
-                if ("/dogShelterInfo".equals(text)) {
+                if ("Приют для собак".equals(text)) {
                     sendMessage(chatId,
                             "Это приют для собак. Здесь вы можете о часах работы и местонахождении приюта");
                 }
-                if ("/catShelterInfo".equals(text)) {
+                if ("Приют для кошек".equals(text)) {
                     sendMessage(chatId,
                             "Это приют для кошек. Здесь вы можете о часах работы и местонахождении приюта");
                 }
@@ -70,7 +75,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private void sendMessage(Long chatId, String message) {
-        SendMessage sendMessage = new SendMessage(chatId,message);
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new KeyboardButton("Приют для собак"),
+                new KeyboardButton("Приют для кошек"));
+        replyKeyboardMarkup.resizeKeyboard(true);
+        replyKeyboardMarkup.oneTimeKeyboard(false);
+        replyKeyboardMarkup.selective(false);
+        SendMessage sendMessage = new SendMessage(chatId,message)
+                .replyMarkup(replyKeyboardMarkup)
+                .parseMode(ParseMode.HTML)
+                .disableWebPagePreview(true);;
         SendResponse sendResponse = telegramBot.execute(sendMessage);
         if (!sendResponse.isOk()) {
             logger.error("Error during sending message: {}", sendResponse.description());
