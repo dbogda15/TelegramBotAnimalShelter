@@ -24,14 +24,19 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     public Animal getById(Long id) {
         Optional<Animal> optionalAnimal = animalRepository.findById(id);
-        return optionalAnimal.orElseGet(() -> animalRepository.findById(id).get());
+        if (optionalAnimal.isEmpty()){
+            throw new NotFoundException("Животного с таким ID не существует");
+        }
+        return optionalAnimal.get();
     }
-
     @Override
     public List<Animal> getAllByUserId(Long id) {
-        return animalRepository.getAllByOwnerId(id);
+        List<Animal> result = animalRepository.getAllByOwnerId(id);
+        if (result.isEmpty()){
+            throw new NotFoundException("У пользователя нет животных");
+        }
+        return result;
     }
-
     @Override
     public Animal update(Animal animal) {
         Optional<Animal> animalId = animalRepository.findById(animal.getId());
