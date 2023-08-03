@@ -110,16 +110,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private void sendMessage(Long chatId, String message) {
 
-//        Keyboard replyKeyboardRemove = new ReplyKeyboardRemove();
+        Keyboard replyKeyboardRemove = new ReplyKeyboardRemove();
 
-//        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
-//                new KeyboardButton("/start"));
-//        replyKeyboardMarkup.oneTimeKeyboard(true);
-//        replyKeyboardMarkup.resizeKeyboard(true);
-//        replyKeyboardMarkup.selective(true);
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new KeyboardButton("/start"));
+        replyKeyboardMarkup.oneTimeKeyboard(true);
+        replyKeyboardMarkup.resizeKeyboard(true);
+        replyKeyboardMarkup.selective(true);
 
         SendMessage sendMessage = new SendMessage(chatId, message)
-//                .replyMarkup(replyKeyboardMarkup)
+                .replyMarkup(replyKeyboardMarkup)
                 .parseMode(ParseMode.HTML)
                 .disableWebPagePreview(false);
         SendResponse sendResponse = telegramBot.execute(sendMessage);
