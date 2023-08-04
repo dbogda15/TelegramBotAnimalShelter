@@ -29,6 +29,7 @@ public class AnimalServiceImpl implements AnimalService {
         }
         return optionalAnimal.get();
     }
+
     @Override
     public List<Animal> getAllByUserId(Long id) {
         List<Animal> result = animalRepository.getAllByOwnerId(id);
@@ -37,6 +38,7 @@ public class AnimalServiceImpl implements AnimalService {
         }
         return result;
     }
+
     @Override
     public Animal update(Animal animal) {
         Optional<Animal> animalId = animalRepository.findById(animal.getId());

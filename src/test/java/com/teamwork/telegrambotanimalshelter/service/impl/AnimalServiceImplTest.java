@@ -1,5 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
+import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -121,21 +122,33 @@ class AnimalServiceImplTest {
         verify(animalRepository, times(1)).getAllByOwnerId(null);
     }
 
-    //    @Test
+//        @Test
 //    @DisplayName("Получение обновленного животного")
-//    void shouldUpdateCorrectAnimal() {
-//
-//    }
-
-    //    @Test
-//    @DisplayName("Возвращает животное, если настройка владельца прошла успешно")
-//    void shouldReturnCorrectAnimalAfterSettingOwner(){
+//    void shouldUpdateAnimal() {
 //        when(animalRepository.findById(CORRECT_ID))
-//                .thenReturn(Optional.empty());
+//                .thenReturn(Optional.of(CORRECT_ANIMAL));
 //
-//        assertThrows(NotFoundException.class, () -> out.getById(CORRECT_ID));
+//        when(animalRepository.save(UPDATED_ANIMAL))
+//                .thenReturn(UPDATED_ANIMAL);
+//
+//        Animal result = out.update(UPDATED_ANIMAL);
+//
+//        assertEquals(UPDATED_ANIMAL, result);
 //
 //        verify(animalRepository, times(1)).findById(CORRECT_ID);
+//
+//        verify(animalRepository, times(1)).save(UPDATED_ANIMAL);
 //    }
+
+        @Test
+    @DisplayName("Выбрасывает исключение, если была попытка настройки несуществующего животного")
+    void shouldThrowNotFoundExceptionAfterSettingOwner(){
+        when(animalRepository.findById(CORRECT_ID))
+                .thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> out.getById(CORRECT_ID));
+
+        verify(animalRepository, times(1)).findById(CORRECT_ID);
+    }
 
 }

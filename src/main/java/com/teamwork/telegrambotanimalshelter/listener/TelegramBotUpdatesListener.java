@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-
+import static com.teamwork.telegrambotanimalshelter.model.Constants.SHELTER_INFO;
 
 
 @Service
@@ -53,8 +53,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (message.chat().id() != null) {
                     switch (message.text()) {
                         case "/start":
-                            sendMessage(chatId,
-                                    "Здравствуйте, здесь вы сможете узнать о приюте,как его забрать и ухаживать за ним.");
+                            sendMessage(chatId, SHELTER_INFO);
                             break;
                         case "Приют для собак":
                             sendMessageShelter(chatId,
