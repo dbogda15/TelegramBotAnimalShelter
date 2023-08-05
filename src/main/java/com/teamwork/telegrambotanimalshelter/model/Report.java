@@ -26,12 +26,15 @@ public class Report {
     private String changeInBehavior;
     @Column(name = "date_of_report")
     private LocalDate dateOfReport;
+    @Column(name = "trial_period_id")
+    private Long trialPeriodId;
 
-    public Report(String photoId, String foodRation, String stateOfHealth, String changeInBehavior, LocalDate dateOfReport) {
+    public Report(String photoId, String foodRation, String stateOfHealth, String changeInBehavior, LocalDate dateOfReport, Long trialPeriodId) {
         this.photoId = photoId;
         this.foodRation = foodRation;
         this.stateOfHealth = stateOfHealth;
         this.changeInBehavior = changeInBehavior;
         this.dateOfReport = dateOfReport;
+        this.trialPeriodId = trialPeriodId;
     }
 }
