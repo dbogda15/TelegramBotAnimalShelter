@@ -1,6 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.service;
 
-import com.teamwork.telegrambotanimalshelter.model.Report;
+import com.teamwork.telegrambotanimalshelter.model.report.Report;
 
 import java.util.List;
 

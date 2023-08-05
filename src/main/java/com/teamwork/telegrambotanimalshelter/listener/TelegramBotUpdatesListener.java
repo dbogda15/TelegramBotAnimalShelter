@@ -7,7 +7,12 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
+import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
+import com.teamwork.telegrambotanimalshelter.replymarkup.ReplyMarkUp;
 import com.teamwork.telegrambotanimalshelter.service.OwnerService;
+import com.teamwork.telegrambotanimalshelter.constant.Keyboard;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,23 +20,20 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static com.teamwork.telegrambotanimalshelter.model.Constants.SHELTER_INFO;
+import static com.teamwork.telegrambotanimalshelter.constant.Constants.SHELTER_INFO;
 
 
 @Service
+@RequiredArgsConstructor
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     private final TelegramBot telegramBot;
 
-    private final OwnerService ownerService;
+    private Owner owner;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, OwnerService ownerService) {
-        this.telegramBot = telegramBot;
-        this.ownerService = ownerService;
-    }
-
+    private OwnerService ownerService;
     @PostConstruct
     public void init() {
         telegramBot.setUpdatesListener(this);
@@ -44,6 +46,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     @Override
     public int process(List<Update> list) {
+        ReplyMarkUp replyMarkup = new ReplyMarkUp(telegramBot);
         try {
             list.forEach(update -> {
                 logger.info("Processing update: {}", update);
@@ -51,54 +54,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Long chatId = message.chat().id();
                 String text = message.text();
                 if (message.chat().id() != null) {
-                    switch (message.text()) {
-                        case "/start":
-                            sendMessage(chatId, SHELTER_INFO);
-                            break;
-                        case "Приют для собак":
-                            sendMessageShelter(chatId,
-                                    "Это приют для собак. Здесь вы можете о часах работы и местонахождении приюта.");
-                            break;
-                        case "Приют для кошек":
-                            sendMessageShelter(chatId,
-                                    "Это приют для собак. Здесь вы можете о часах работы и местонахождении кошек.");
-                            break;
-                        case "Как взять животное из приюта":
-                            sendMessageInfo(chatId,
-                                    "Необходимо придти к нам в офис.");
-                            break;
-                        case "Прислать отчет о питомце":
-                            sendMessageInfo(chatId,
-                                    "Прикрепите все необходимые документы.");
-                            break;
-                        case "Позвать волонтера":
-                            sendMessageInfo(chatId,
-                                    "С вами свяжутся через некоторое время.");
-                            return;
-
+                    switch (text) {
+                        case "/start", "К выбору приютов" -> {
+                            logger.info("Запустили бота/выбрали приют - ID:{}", chatId);
+                            replyMarkup.sendMessageStart(chatId);
+                        }
+                        case Keyboard.CAT_SHELTER, Keyboard.DOG_SHELTER -> replyMarkup.sendMessageStage(chatId);
                     }
-//               sendMessage(chatId,
-//                            " Здравствуйте, здесь вы сможете узнать о приюте,как его забрать и ухаживать за ним. ");
-//                }
-//                if ("Приют для собак".equals(text)) {
-//                    sendMessageShelter(chatId,
-//                            "Это приют для собак. Здесь вы можете о часах работы и местонахождении приюта");
-//                }
-//                if ("Приют для кошек".equals(text)) {
-//                    sendMessageShelter(chatId,
-//                            "Это приют для кошек. Здесь вы можете о часах работы и местонахождении приюта");
-//                }
-//                if ("Как взять животное из приюта".equals(text)) {
-//                    sendMessageInfo(chatId,
-//                            "Необходимо придти к нам в офис.");
-//                }
-//                if ("Прислать отчет о питомце".equals(text)) {
-//                    sendMessageInfo(chatId,
-//                            "Прикрепите все необходимые документы.");
-//                }
-//                if ("Позвать волонтера".equals(text)) {
-//                    sendMessageInfo(chatId,
-//                            "С вами свяжутся через некоторое время.");
                 }
             });
         } catch (Exception e) {
@@ -108,61 +70,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private void sendMessage(Long chatId, String message) {
-
-        Keyboard replyKeyboardRemove = new ReplyKeyboardRemove();
-
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new KeyboardButton("/start"));
-        replyKeyboardMarkup.oneTimeKeyboard(true);
-        replyKeyboardMarkup.resizeKeyboard(true);
-        replyKeyboardMarkup.selective(true);
-
-        SendMessage sendMessage = new SendMessage(chatId, message)
-                .replyMarkup(replyKeyboardMarkup)
-                .parseMode(ParseMode.HTML)
-                .disableWebPagePreview(false);
-        SendResponse sendResponse = telegramBot.execute(sendMessage);
+        SendResponse sendResponse = telegramBot.execute(new SendMessage(chatId, message));
         if (!sendResponse.isOk()) {
-            logger.error("Error during sending message: {}", sendResponse.description());
+            logger.error(sendResponse.description());
         }
     }
 
-    private void sendMessageShelter(Long chatId, String message) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new KeyboardButton("Приют для собак"),
-                new KeyboardButton("Приют для кошек"));
-        replyKeyboardMarkup.oneTimeKeyboard(true);
-        replyKeyboardMarkup.resizeKeyboard(true);
-        replyKeyboardMarkup.selective(false);
-
-
-        SendMessage sendMessageShelter = new SendMessage(chatId, message)
-                .replyMarkup(replyKeyboardMarkup)
-                .parseMode(ParseMode.HTML)
-                .disableWebPagePreview(true);
-        SendResponse sendResponse = telegramBot.execute(sendMessageShelter);
-        if (!sendResponse.isOk()) {
-            logger.error("Error during sending message: {}", sendResponse.description());
-        }
-    }
-
-    private void sendMessageInfo(Long chatId, String message) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new KeyboardButton("Как взять животное из приюта"),
-                new KeyboardButton("Прислать отчет о питомце"),
-                new KeyboardButton("Позвать волонтера"));
-        replyKeyboardMarkup.oneTimeKeyboard(true);
-        replyKeyboardMarkup.resizeKeyboard(true);
-        replyKeyboardMarkup.selective(false);
-        SendMessage sendMessageInfo = new SendMessage(chatId, message)
-                .replyMarkup(replyKeyboardMarkup)
-                .parseMode(ParseMode.HTML)
-                .disableWebPagePreview(true);
-
-        SendResponse sendResponse = telegramBot.execute(sendMessageInfo);
-        if (!sendResponse.isOk()) {
-            logger.error("Error during sending message: {}", sendResponse.description());
-        }
-    }
 
 }

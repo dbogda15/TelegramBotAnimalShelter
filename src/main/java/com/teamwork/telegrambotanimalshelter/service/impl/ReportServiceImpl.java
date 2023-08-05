@@ -1,6 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
-import com.teamwork.telegrambotanimalshelter.model.Report;
+import com.teamwork.telegrambotanimalshelter.model.report.Report;
 import com.teamwork.telegrambotanimalshelter.repository.ReportRepository;
 import com.teamwork.telegrambotanimalshelter.service.ReportService;
 import org.springframework.stereotype.Service;

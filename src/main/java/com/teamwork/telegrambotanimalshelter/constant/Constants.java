@@ -1,6 +1,12 @@
-package com.teamwork.telegrambotanimalshelter.model;
+package com.teamwork.telegrambotanimalshelter.constant;
 
 public class Constants {
+
+    public static final String WELCOME = """
+            1
+            2
+            3
+            """;
     public static final String SHELTER_INFO = """
             1. Info 1
             2. Info 2
