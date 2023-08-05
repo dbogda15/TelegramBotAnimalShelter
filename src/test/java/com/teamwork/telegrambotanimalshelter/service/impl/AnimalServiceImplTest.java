@@ -113,6 +113,7 @@ class AnimalServiceImplTest {
     }
 
     @Test
+    @DisplayName("Проверка свободных животных")
     void shouldReturnListOfFreeAnimal(){
         when(animalRepository.getAllByOwnerId(null))
                 .thenReturn(List.of(FREE_ANIMAL));
