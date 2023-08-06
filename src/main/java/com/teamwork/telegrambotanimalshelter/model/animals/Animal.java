@@ -28,6 +28,7 @@ public class Animal {
     /**
      * Enum для определения типа животного
      */
+    @Enumerated(value = EnumType.STRING)
     private AnimalType animalType;
     /**
      * Кличка животного

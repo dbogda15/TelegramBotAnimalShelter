@@ -22,16 +22,19 @@ public class Report {
     private String foodRation;
     @Column(name = "state_of_health")
     private String stateOfHealth;
-    @Column(name = "change_in_behavior")
-    private String changeInBehavior;
+    @Column(name = "behavior_change")
+    private String behaviorChange;
     @Column(name = "date_of_report")
     private LocalDate dateOfReport;
+    @Column(name = "trial_period_id")
+    private Long trialPeriodId;
 
-    public Report(String photoId, String foodRation, String stateOfHealth, String changeInBehavior, LocalDate dateOfReport) {
+    public Report(String photoId, String foodRation, String stateOfHealth, String behaviorChange, LocalDate dateOfReport, Long trialPeriodId) {
         this.photoId = photoId;
         this.foodRation = foodRation;
         this.stateOfHealth = stateOfHealth;
-        this.changeInBehavior = changeInBehavior;
+        this.behaviorChange = behaviorChange;
         this.dateOfReport = dateOfReport;
+        this.trialPeriodId = trialPeriodId;
     }
 }

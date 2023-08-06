@@ -2,6 +2,7 @@ package com.teamwork.telegrambotanimalshelter.model.owners;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import lombok.AllArgsConstructor;
@@ -48,12 +49,21 @@ public class Owner {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "owner")
     private List<Animal> animals;
-
+    /**
+     * Список испытательных сроков
+     */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ownerId")
+    private List<TrialPeriod> trialPeriodList;
     public Owner(String name, String phone) {
         this.name = name;
         this.phone = phone;
     }
-
+    public Owner(Long chatId, String name, String phone, List<TrialPeriod> trialPeriodList) {
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+        this.trialPeriodList = trialPeriodList;
+    }
     @Override
     public String toString() {
         return "id = " + id + ", name= " + name + ", phone='" + phone +
