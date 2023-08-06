@@ -2,6 +2,7 @@ package com.teamwork.telegrambotanimalshelter.service.impl;
 
 import com.teamwork.telegrambotanimalshelter.exceptions.IncorrectArgumentException;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
+import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.repository.OwnerRepository;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
@@ -24,8 +25,9 @@ public class OwnerServiceImpl implements OwnerService {
         if (animalService.getById(animalId).getOwner() != null) {
             throw new IncorrectArgumentException("У этого животного есть хозяин!");
         }
+        AnimalType animalType = animalService.getById(animalId).getAnimalType();
+        owner.setOwnerType(animalType);
         animalService.getById(animalId).setOwner(owner);
-        owner.setOwnerType(animalService.getById(animalId).getAnimalType());
         return ownerRepository.save(owner);
     }
 

@@ -4,5 +4,5 @@ public enum TrialPeriodType {
     IN_PROGRESS,
     FAILED,
     FINISHED,
-    CONTINUED
+    EXTENDED
 }
