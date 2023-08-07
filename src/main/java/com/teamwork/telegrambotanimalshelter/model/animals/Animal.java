@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.teamwork.telegrambotanimalshelter.exceptions.IncorrectArgumentException;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
+import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,6 @@ public class Animal {
     /**
      * Enum для определения типа животного
      */
-    @Enumerated(value = EnumType.STRING)
     private AnimalType animalType;
     /**
      * Кличка животного
@@ -43,6 +43,7 @@ public class Animal {
     @JsonBackReference
     @JoinColumn(name = "owner")
     private Owner owner;
+    private Long shelterId;
     public Animal(AnimalType animalType, String name, Integer age) {
         this.animalType = animalType;
         this.name = name;

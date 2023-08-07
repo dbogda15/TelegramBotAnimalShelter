@@ -1,4 +1,4 @@
-package com.teamwork.telegrambotanimalshelter.model.report;
+package com.teamwork.telegrambotanimalshelter.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

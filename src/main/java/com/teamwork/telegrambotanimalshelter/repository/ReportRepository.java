@@ -1,6 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.repository;
 
-import com.teamwork.telegrambotanimalshelter.model.report.Report;
+import com.teamwork.telegrambotanimalshelter.model.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
