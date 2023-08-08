@@ -93,10 +93,9 @@ public class ShelterController {
     }
 
     @GetMapping("/animal_list")
-    @Operation(summary = "")
+    @Operation(summary = "Получение списка животных по ID приюта")
     ResponseEntity<List<Animal>> getAnimalsFromShelter(@RequestParam Long id){
         List<Animal> result = shelterService.getAnimals(id);
         return ResponseEntity.ok(result);
     }
-
 }
