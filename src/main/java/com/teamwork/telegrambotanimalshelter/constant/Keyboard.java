@@ -24,4 +24,13 @@ public class Keyboard {
     public static final String PUPPY_SETUP = "Обустройство щенка";
     public static final String ADULT_DOG_SETUP = "Обустройство взрослой собаки";
     public static final String ARRANGEMENT_OF_DOG_WITH_DISABILITIES = "Обустройство собаки с ограниченными возможностями";
+    public static final String DOG_HANDLERS_ADVICE = "Советы кинолога";
+    public static final String PROVEN_CYNOLOGISTS = "Проверенные кинологи для обращения";
+    public static final String BACK_TO_ALL_ABOUT_DOGS = "Назад в \"Все о собаках\"";
+    public static final String RULES_FOR_DATING_A_CAT = "Правила знакомства c кошкой";
+    public static final String CAT_CARRIAGE = "Перевозка кошки";
+    public static final String ADULT_CAT_SETUP = "Обустройство взрослой кошки";
+    public static final String KITTEN_SETUP = "Обустройство котенка";
+    public static final String ARRANGEMENT_OF_CAT_WITH_DISABILITIES = "Обустройство кошки с ограниченными возможностями";
+    public static final String BACK_TO_ALL_ABOUT_CATS = "Назад в \"Все о кошках\"";
 }
