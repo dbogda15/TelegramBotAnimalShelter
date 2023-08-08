@@ -26,7 +26,7 @@ public class AnimalController {
     }
 
     @PostMapping
-    @Operation(summary = "Создание нового животного и добавление его в БД")
+    @Operation(summary = "Создание нового животного и добавление его в БД без привязки к приюту")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Запрос выполнен успешно"),
             @ApiResponse(responseCode = "400", description = "Ошибка в параметрах запроса"),
@@ -35,13 +35,11 @@ public class AnimalController {
     })
     public ResponseEntity<Animal> create(@RequestParam AnimalType animalType,
                                          @RequestParam String name,
-                                         @RequestParam Integer age,
-                                         @RequestParam Long shelterId) {
+                                         @RequestParam Integer age) {
         Animal newAnimal = new Animal();
         newAnimal.setAnimalType(animalType);
         newAnimal.setName(name);
         newAnimal.setAge(age);
-        newAnimal.setShelterId(shelterId);
         animalService.create(newAnimal);
         return ResponseEntity.ok(newAnimal);
     }
@@ -99,9 +97,29 @@ public class AnimalController {
     @Operation(summary = "Назначить животному хозяина")
     public ResponseEntity<Animal> setOwnerId(@RequestParam Long id,
                                              @RequestParam Long owner_id) {
-        Animal animal = animalService.getById(id);
-        animal.setOwner(ownerService.getById(owner_id));
-        animalService.update(animal);
-        return ResponseEntity.ok(animal);
+        Animal updated = animalService.setOwner(id, ownerService.getById(owner_id));
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/shelter_id")
+    @Operation(summary = "Пристроить животное в приют")
+    public ResponseEntity<Animal> setShelterId(@RequestParam Long animalId,
+                                               @RequestParam Long shelterId) {
+        Animal updated = animalService.setShelterId(animalId, shelterId);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/cat_list")
+    @Operation(summary = "Получение списка котов")
+    public ResponseEntity<List<Animal>> getCatList() {
+        List<Animal> result = animalService.getAnimalsByType(AnimalType.CAT);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/dog_list")
+    @Operation(summary = "Получение списка собак")
+    public ResponseEntity<List<Animal>> getDogList() {
+        List<Animal> result = animalService.getAnimalsByType(AnimalType.DOG);
+        return ResponseEntity.ok(result);
     }
 }

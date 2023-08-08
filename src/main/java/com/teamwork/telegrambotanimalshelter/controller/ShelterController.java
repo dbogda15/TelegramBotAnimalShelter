@@ -1,5 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.controller;
 
+import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.service.ShelterService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -88,6 +90,13 @@ public class ShelterController {
         }
         shelterService.update(shelter);
         return ResponseEntity.ok(shelter);
+    }
+
+    @GetMapping("/animal_list")
+    @Operation(summary = "")
+    ResponseEntity<List<Animal>> getAnimalsFromShelter(@RequestParam Long id){
+        List<Animal> result = shelterService.getAnimals(id);
+        return ResponseEntity.ok(result);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.teamwork.telegrambotanimalshelter.service;
 
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
+import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import org.springframework.stereotype.Service;
 
@@ -59,4 +60,19 @@ public interface AnimalService {
      * @return
      */
     Animal setOwner(Long id, Owner owner);
+
+    /**
+     * Получение списка животных по конкретному типу
+     * @param animalType
+     * @return
+     */
+    List<Animal> getAnimalsByType(AnimalType animalType);
+
+    /**
+     * Назначение животному ID приюта
+     * @param animalId
+     * @param shelterId
+     * @return
+     */
+    Animal setShelterId(Long animalId, Long shelterId);
 }
