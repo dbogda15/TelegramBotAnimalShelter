@@ -1,12 +1,16 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
+import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
+import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
+import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import com.teamwork.telegrambotanimalshelter.repository.ShelterRepository;
 import com.teamwork.telegrambotanimalshelter.service.ShelterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -14,6 +18,7 @@ import java.util.Optional;
 public class ShelterServiceImpl implements ShelterService {
 
 private final ShelterRepository shelterRepository;
+private final AnimalRepository animalRepository;
     @Override
     public Shelter create(Shelter shelter) {
         shelterRepository.save(shelter);
@@ -37,11 +42,16 @@ private final ShelterRepository shelterRepository;
 
     @Override
     public Shelter update(Shelter shelter) {
-        Optional<Shelter> shelterId = shelterRepository.findById(shelter.getId());
-        if(shelterId.isEmpty()){
+        Optional<Shelter> optional = shelterRepository.findById(shelter.getId());
+        if(optional.isEmpty()){
             throw new NotFoundException("Приют не найден");
         }
-        Shelter shelter1 = shelterId.get();
-        return shelterRepository.save(shelter1);
+        Shelter updated = optional.get();
+        return shelterRepository.save(updated);
+    }
+
+    @Override
+    public List<Animal> getAnimals(Long shelterId) {
+        return animalRepository.getAnimalsByShelterId(shelterId);
     }
 }

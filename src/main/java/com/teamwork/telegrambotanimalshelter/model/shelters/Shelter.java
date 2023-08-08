@@ -53,7 +53,7 @@ public class Shelter {
      * Список животных в приюте
      */
     @OneToMany(mappedBy = "shelterId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Animal> list;
+    private List<Animal> animalList;
 
     /**
      * Способ связи с охраной
@@ -83,7 +83,7 @@ public class Shelter {
     /**
      * Конструктор для PUT в БД (без id, без List)
      */
-    public Shelter(String name, String location, String timetable, String aboutMe, String security, String safetyAdvice, AnimalType shelterType, List<Animal> list) {
+    public Shelter(String name, String location, String timetable, String aboutMe, String security, String safetyAdvice, AnimalType shelterType, List<Animal> animalList) {
         this.name = name;
         this.location = location;
         this.timetable = timetable;
@@ -91,7 +91,7 @@ public class Shelter {
         this.security = security;
         this.safetyAdvice = safetyAdvice;
         this.shelterType = shelterType;
-        this.list = list;
+        this.animalList = animalList;
     }
 }
 
