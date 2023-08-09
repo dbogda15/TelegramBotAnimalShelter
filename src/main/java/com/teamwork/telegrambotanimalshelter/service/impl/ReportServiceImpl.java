@@ -5,6 +5,7 @@ import com.teamwork.telegrambotanimalshelter.exceptions.ObjectAlreadyExistsExcep
 import com.teamwork.telegrambotanimalshelter.model.Report;
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
+import com.teamwork.telegrambotanimalshelter.model.Report;
 import com.teamwork.telegrambotanimalshelter.repository.ReportRepository;
 import com.teamwork.telegrambotanimalshelter.service.ReportService;
 import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;

@@ -2,6 +2,7 @@ package com.teamwork.telegrambotanimalshelter.service;
 
 import com.teamwork.telegrambotanimalshelter.model.Report;
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
+import com.teamwork.telegrambotanimalshelter.model.Report;
 
 import java.time.LocalDate;
 import java.util.List;

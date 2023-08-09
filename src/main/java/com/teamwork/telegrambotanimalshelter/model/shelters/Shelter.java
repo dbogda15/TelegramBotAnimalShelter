@@ -80,10 +80,24 @@ public class Shelter {
         this.safetyAdvice = safetyAdvice;
     }
 
+
+
     /**
      * Конструктор для PUT в БД (без id, без List)
      */
     public Shelter(String name, String location, String timetable, String aboutMe, String security, String safetyAdvice, AnimalType shelterType, List<Animal> animalList) {
+        this.name = name;
+        this.location = location;
+        this.timetable = timetable;
+        this.aboutMe = aboutMe;
+        this.security = security;
+        this.safetyAdvice = safetyAdvice;
+        this.shelterType = shelterType;
+        this.animalList = animalList;
+    }
+
+    public Shelter(Long id, String name, String location, String timetable, String aboutMe, String security, String safetyAdvice, AnimalType shelterType, List<Animal> animalList) {
+        this.id = id;
         this.name = name;
         this.location = location;
         this.timetable = timetable;
