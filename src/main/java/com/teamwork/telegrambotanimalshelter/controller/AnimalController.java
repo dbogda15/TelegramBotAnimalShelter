@@ -36,10 +36,7 @@ public class AnimalController {
     public ResponseEntity<Animal> create(@RequestParam AnimalType animalType,
                                          @RequestParam String name,
                                          @RequestParam Integer age) {
-        Animal newAnimal = new Animal();
-        newAnimal.setAnimalType(animalType);
-        newAnimal.setName(name);
-        newAnimal.setAge(age);
+        Animal newAnimal = new Animal(animalType, name, age);
         animalService.create(newAnimal);
         return ResponseEntity.ok(newAnimal);
     }
