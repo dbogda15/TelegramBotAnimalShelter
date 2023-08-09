@@ -8,7 +8,7 @@
         <property name="connection.url">jdbc:postgresql://localhost:5432/animal_shelter</property> <!-- BD Name -->
         <property name="connection.driver_class">org.postgresql.Driver</property> <!-- DB Driver -->
         <property name="connection.username">postgres</property> <!-- DB User -->
-        <property name="connection.password">950215</property> <!-- DB Password -->
+        <property name="connection.password">redefokos123</property> <!-- DB Password -->
 
         <property name="dialect">org.hibernate.dialect.PostgreSQL9Dialect</property> <!-- DB Dialect -->
         <property name="hbm2ddl.auto">update</property> <!-- create / create-drop / update -->
