@@ -17,6 +17,8 @@ public interface OwnerService {
      */
     Owner create(Owner owner, Long animalId) throws IncorrectArgumentException;
 
+    Owner create(Owner owner);
+    Owner getByChatId(Long chatId);
     /**
      * Получение владельца животного по его ID
      * @param id

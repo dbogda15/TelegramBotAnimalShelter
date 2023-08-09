@@ -58,6 +58,10 @@ public class Owner {
         this.name = name;
         this.phone = phone;
     }
+    public Owner(Long chatId, String name){
+        this.chatId = chatId;
+        this.name = name;
+    }
     public Owner(Long chatId, String name, String phone, List<TrialPeriod> trialPeriodList) {
         this.chatId = chatId;
         this.name = name;

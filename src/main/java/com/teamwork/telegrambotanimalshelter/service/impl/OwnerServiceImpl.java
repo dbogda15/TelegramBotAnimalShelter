@@ -32,6 +32,11 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    public Owner create(Owner owner) {
+        return ownerRepository.save(owner);
+    }
+
+    @Override
     public Owner getById(Long id) {
         return ownerRepository.findById(id).get();
     }
@@ -55,5 +60,10 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public List<Owner> getAll() {
         return ownerRepository.findAll();
+    }
+
+    @Override
+    public Owner getByChatId(Long chatId) {
+        return ownerRepository.getOwnerByChatId(chatId);
     }
 }

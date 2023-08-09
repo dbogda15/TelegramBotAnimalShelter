@@ -17,4 +17,5 @@ public interface ShelterService {
 
     Shelter update(Shelter shelter);
     List<Animal> getAnimals(Long shelterId);
+    Shelter getByShelterType(AnimalType type);
 }
