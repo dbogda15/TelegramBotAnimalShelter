@@ -45,7 +45,7 @@ public interface AnimalService {
      * Удаление животного из БД по его идентификатору
      * @param id
      */
-    void delete(Long id);
+    String delete(Long id);
 
     /**
      * Получение списка свободных животных

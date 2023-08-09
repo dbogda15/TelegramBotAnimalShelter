@@ -48,21 +48,13 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public Animal update(Animal animal) {
-        Optional<Animal> animalId = animalRepository.findById(animal.getId());
-        if (animalId.isEmpty()) {
-            throw new NotFoundException("Такого животного не существует!");
-        }
-        Animal existAnimal = animalId.get();
+        Animal existAnimal = getById(animal.getId());
         return animalRepository.save(existAnimal);
     }
 
     @Override
     public Animal setOwner(Long id, Owner owner) {
-        Optional<Animal> animal = animalRepository.findById(id);
-        if (animal.isEmpty()){
-           throw new NotFoundException("Такого животного не существует!");
-        }
-        Animal existAnimal = animal.get();
+        Animal existAnimal = getById(id);
         existAnimal.setOwner(owner);
         return animalRepository.save(existAnimal);
     }
@@ -72,10 +64,17 @@ public class AnimalServiceImpl implements AnimalService {
         return animalRepository.findAll();
     }
 
+
     @Override
-    public void delete(Long id) {
-        Animal animal = getById(id);
-        animalRepository.delete(animal);
+    public String delete(Long id) {
+        String message;
+        Optional<Animal> animal = animalRepository.findById(id);
+        if(animal.isPresent()){
+            animalRepository.delete(animal.get());
+            message = "Животное удалено";
+        }
+        else throw new NotFoundException("Животное с таким ID не существует");
+        return message;
     }
 
     @Override
