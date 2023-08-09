@@ -34,6 +34,7 @@ class ShelterServiceImplTest {
     @InjectMocks
     ShelterServiceImpl out;
 
+    public static final Long CORRECT_ID = 1L;
 
     private static final String NAME = "name";
     private static final String UPDATE_NAME = "names";
@@ -44,7 +45,6 @@ class ShelterServiceImplTest {
     private static final String SAFETY_ADVICE = "safetyAdvice";
     private static final AnimalType SHELTER_TYPE = AnimalType.CAT;
     private static final List<Animal> ANIMAL_LIST = new ArrayList<>();
-    public static final Long CORRECT_ID = 1L;
     private static final Shelter CORRECT_SHELTER = new Shelter(CORRECT_ID, NAME, LOCATION, TIMETABLE, ABOUT_ME, SECURITY,
             SAFETY_ADVICE, SHELTER_TYPE, ANIMAL_LIST);
     private static final Shelter UPDATE_SHELTER = new Shelter(UPDATE_NAME, LOCATION, TIMETABLE, ABOUT_ME, SECURITY,
@@ -77,12 +77,30 @@ class ShelterServiceImplTest {
     @Test
     @DisplayName("Удаление приюта по его ID")
     void deleteShelterIfIdCorrect() {
-        when(out.getById(CORRECT_ID))
-                .thenReturn(CORRECT_SHELTER);
-        //when(shelterRepository.delete(CORRECT_SHELTER));
+        when(shelterRepository.findById(CORRECT_ID))
+                .thenReturn(Optional.of(CORRECT_SHELTER));
 
-        assertEquals(CORRECT_SHELTER, out.getById(CORRECT_ID));
+        when(shelterRepository.deleteShelter(CORRECT_SHELTER)).
+                thenReturn(CORRECT_SHELTER);
 
+        assertEquals(CORRECT_SHELTER, out.delete(CORRECT_ID));
+
+        verify(shelterRepository, times(1)).findById(CORRECT_ID);
+    }
+    @Test
+    @DisplayName("Выброс исключения, если искомого приюта нет")
+    void shouldThrowNotFoundExceptionWhenGetById() {
+        when(shelterRepository.findById(CORRECT_ID)).
+                thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> out.getById(CORRECT_ID));
+        verify(shelterRepository, times(1)).findById(CORRECT_ID);
+    }
+    @Test
+    @DisplayName("Выброс исключения, если искомого приюта нет")
+    void shouldThrowNotFoundExceptionWhenUpdate() {
+        when(shelterRepository.findById(CORRECT_ID)).
+                thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> out.update(CORRECT_SHELTER));
         verify(shelterRepository, times(1)).findById(CORRECT_ID);
     }
 
@@ -112,20 +130,4 @@ class ShelterServiceImplTest {
         verify(animalRepository, times(1)).getAnimalsByShelterId(CORRECT_ID);
     }
 
-    @Test
-    @DisplayName("Выброс исключения, если искомого приюта нет")
-    void shouldThrowNotFoundExceptionWhenGetById() {
-        when(shelterRepository.findById(CORRECT_ID)).
-                thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> out.getById(CORRECT_ID));
-        verify(shelterRepository, times(1)).findById(CORRECT_ID);
-    }
-    @Test
-    @DisplayName("Выброс исключения, если искомого приюта нет")
-    void shouldThrowNotFoundExceptionWhenUpdate() {
-        when(shelterRepository.findById(CORRECT_ID)).
-                thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> out.update(CORRECT_SHELTER));
-        verify(shelterRepository, times(1)).findById(CORRECT_ID);
-    }
 }
