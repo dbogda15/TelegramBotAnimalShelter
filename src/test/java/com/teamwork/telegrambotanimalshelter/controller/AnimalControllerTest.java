@@ -40,7 +40,7 @@ class AnimalControllerTest {
     MockMvc mockMvc;
 
     static final Long ID_1 = 1L;
-    static final Owner OWNER = new Owner(ID_1, "Diana", "89171231213");
+    static final Owner OWNER = new Owner(1L, "Diana", "89171231213");
     static final Animal ANIMAL = new Animal(ID_1, AnimalType.CAT, "Name", 5, OWNER, 1L);
     static final Animal NEW_ANIMAL = new Animal(AnimalType.CAT, "Name", 5);
     static final Animal UPDATED_ANIMAL = new Animal(ID_1, AnimalType.CAT, "New name", 10, 1L);
@@ -183,24 +183,22 @@ class AnimalControllerTest {
         verify(animalService, times(1)).getAnimalsByType(AnimalType.DOG);
     }
 
-//    @Test
-//    @DisplayName("Назначить животному хозяина")
-//    void whenSetOwnerToAnimal_thenReturn200 () throws Exception {
-//        when(animalService.setOwner(DONUT.getId(), OWNER))
-//                .thenReturn(DONUT_WITH_OWNER);
-//        mockMvc.perform(put("/animals/owner_id")
-//                        .param("id", "2")
-//                        .param("owner_id", "1"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("id").value(2L))
-//                .andExpect(jsonPath("animalType").value("CAT"))
-//                .andExpect(jsonPath("name").value("Donut"))
-//                .andExpect(jsonPath("age").value(4))
-//                .andExpect(jsonPath("owner").value(OWNER))
-//                .andExpect(jsonPath("shelterId").value(1L));
-//
-//        verify(ownerService, times(1)).getById(OWNER.getId());
-//        verify(animalService, times(1)).setOwner(2L, OWNER);
-//
-//    }
+    @Test
+    @DisplayName("Назначить животному хозяина")
+    void whenSetOwnerToAnimal_thenReturn200 () throws Exception {
+        when(animalService.setOwner(2L, 1L))
+                .thenReturn(DONUT_WITH_OWNER);
+        mockMvc.perform(put("/animals/owner_id?id=2&owner_id=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(2))
+                .andExpect(jsonPath("animalType").value("CAT"))
+                .andExpect(jsonPath("name").value("Donut"))
+                .andExpect(jsonPath("age").value(4))
+                .andExpect(jsonPath("shelterId").value(1));
+
+        verify(animalService, times(1)).setOwner(2L, 1L);
+
+    }
+//    static final Owner OWNER = new Owner(1L, "Diana", "89171231213");
+
 }
