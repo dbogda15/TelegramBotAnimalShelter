@@ -82,7 +82,7 @@ public class AnimalController {
     @Operation(summary = "Назначить животному хозяина")
     public ResponseEntity<Animal> setOwnerId(@RequestParam Long id,
                                              @RequestParam Long owner_id) {
-        Animal updated = animalService.setOwner(id, ownerService.getById(owner_id));
+        Animal updated = animalService.setOwner(id, owner_id);
         return ResponseEntity.ok(updated);
     }
 

@@ -1,13 +1,10 @@
 package com.teamwork.telegrambotanimalshelter.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
-import com.teamwork.telegrambotanimalshelter.service.OwnerService;
 import com.teamwork.telegrambotanimalshelter.service.impl.AnimalServiceImpl;
 import com.teamwork.telegrambotanimalshelter.service.impl.OwnerServiceImpl;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -193,12 +187,27 @@ class AnimalControllerTest {
                 .andExpect(jsonPath("id").value(2))
                 .andExpect(jsonPath("animalType").value("CAT"))
                 .andExpect(jsonPath("name").value("Donut"))
-                .andExpect(jsonPath("age").value(4))
-                .andExpect(jsonPath("shelterId").value(1));
+                .andExpect(jsonPath("age").value(4));
 
         verify(animalService, times(1)).setOwner(2L, 1L);
 
     }
-//    static final Owner OWNER = new Owner(1L, "Diana", "89171231213");
 
+    @Test
+    @DisplayName("Назначить животному хозяина")
+    void whenSetShelterToAnimal_thenReturn200 () throws Exception {
+        when(animalService.setShelterId(2L, 1L))
+                .thenReturn(DONUT);
+        mockMvc.perform(put("/animals/shelter_id")
+                        .param("animalId","2")
+                        .param("shelterId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(2))
+                .andExpect(jsonPath("animalType").value("CAT"))
+                .andExpect(jsonPath("name").value("Donut"))
+                .andExpect(jsonPath("age").value(4));
+
+        verify(animalService, times(1)).setShelterId(2L, 1L);
+
+    }
 }
