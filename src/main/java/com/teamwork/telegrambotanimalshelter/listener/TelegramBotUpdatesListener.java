@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import com.teamwork.telegrambotanimalshelter.constant.Constants;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static com.teamwork.telegrambotanimalshelter.constant.Constants.SHELTER_INFO;
 
 
 @Service
@@ -101,10 +101,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         case Keyboard.ABOUT_THE_SHELTER -> {
                             AnimalType type = owner.getOwnerType();
                             if(type.equals(AnimalType.DOG)){
-                                sendMessage(chatId, shelterService.getByShelterType(type).getAboutMe());
+                                sendMessage(chatId, Constants.DOG_SHELTER_INFO);
                             }
                             if(type.equals(AnimalType.CAT)){
-                                sendMessage(chatId, shelterService.getByShelterType(type).getAboutMe());
+                                sendMessage(chatId, Constants.CAT_SHELTER_INFO);
                             }
                         }
                         case Keyboard.WORK_SCHEDULE -> {
