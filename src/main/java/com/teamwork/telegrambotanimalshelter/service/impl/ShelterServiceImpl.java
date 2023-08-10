@@ -17,8 +17,9 @@ import java.util.Optional;
 @Service
 public class ShelterServiceImpl implements ShelterService {
 
-private final ShelterRepository shelterRepository;
-private final AnimalRepository animalRepository;
+    private final ShelterRepository shelterRepository;
+    private final AnimalRepository animalRepository;
+
     @Override
     public Shelter create(Shelter shelter) {
         shelterRepository.save(shelter);
@@ -28,7 +29,7 @@ private final AnimalRepository animalRepository;
     @Override
     public Shelter getById(Long id) {
         Optional<Shelter> shelter = shelterRepository.findById(id);
-        if(shelter.isEmpty()){
+        if (shelter.isEmpty()) {
             throw new NotFoundException("Приют не найден");
         }
         return shelter.get();
@@ -43,7 +44,7 @@ private final AnimalRepository animalRepository;
     @Override
     public Shelter update(Shelter shelter) {
         Optional<Shelter> optional = shelterRepository.findById(shelter.getId());
-        if(optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new NotFoundException("Приют не найден");
         }
         Shelter updated = optional.get();

@@ -15,7 +15,7 @@ public class AnimalServiceImplConstants {
     public static final String CORRECT_OWNER_PHONE = "89991234567";
     public static final String CORRECT_OWNER_NAME = "Name";
     public static final Owner CORRECT_OWNER = new Owner(CORRECT_OWNER_NAME, CORRECT_OWNER_PHONE);
-    public static final Animal CORRECT_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER);
-    public static final Animal FREE_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, null);
-    public static final Animal UPDATED_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, NEW_NAME, CORRECT_AGE, CORRECT_OWNER);
+//    public static final Animal CORRECT_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER);
+//    public static final Animal FREE_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, null);
+//    public static final Animal UPDATED_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, NEW_NAME, CORRECT_AGE, CORRECT_OWNER);
 }

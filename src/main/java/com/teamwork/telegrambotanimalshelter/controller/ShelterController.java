@@ -38,9 +38,9 @@ public class ShelterController {
                                           @RequestParam String security,
                                           @RequestParam String safetyAdvice,
                                           @RequestParam AnimalType shelterType){
-       Shelter shelter = new Shelter(name,location,timetable,aboutMe,security,safetyAdvice,shelterType, new ArrayList<>());
-               shelterService.create(shelter);
-       return ResponseEntity.ok(shelter);
+        Shelter shelter = new Shelter(name,location,timetable,aboutMe,security,safetyAdvice,shelterType, new ArrayList<>());
+        shelterService.create(shelter);
+        return ResponseEntity.ok(shelter);
     }
 
     @DeleteMapping
