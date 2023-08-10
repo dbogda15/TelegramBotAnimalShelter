@@ -80,10 +80,9 @@ class ShelterServiceImplTest {
         when(shelterRepository.findById(CORRECT_ID))
                 .thenReturn(Optional.of(CORRECT_SHELTER));
 
-        when(shelterRepository.deleteShelter(CORRECT_SHELTER)).
-                thenReturn(CORRECT_SHELTER);
+        doNothing().when(shelterRepository).delete(CORRECT_SHELTER);
 
-        assertEquals(CORRECT_SHELTER, out.delete(CORRECT_ID));
+        assertEquals("Приют удалён", out.delete(CORRECT_ID));
 
         verify(shelterRepository, times(1)).findById(CORRECT_ID);
     }

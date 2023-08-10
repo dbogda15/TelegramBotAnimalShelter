@@ -35,10 +35,15 @@ private final AnimalRepository animalRepository;
     }
 
     @Override
-    public Shelter delete(Long id) {
-        Shelter shelter = getById(id);
-        shelterRepository.deleteShelter(shelter);
-        return shelter;
+    public String delete(Long id) {
+        String message;
+        Optional<Shelter> shelter = shelterRepository.findById(id);
+        if (shelter.isPresent()){
+            shelterRepository.delete(shelter.get());
+            message = "Приют удалён";
+        }
+        else throw new NotFoundException("Приют с таким ID не существует");
+        return message;
     }
 
     @Override

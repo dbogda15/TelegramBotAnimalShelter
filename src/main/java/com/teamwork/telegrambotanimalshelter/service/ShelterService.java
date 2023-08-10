@@ -13,7 +13,7 @@ public interface ShelterService {
 
     Shelter getById(Long id);
 
-    Shelter delete(Long id);
+    String delete(Long id);
 
     Shelter update(Shelter shelter);
     List<Animal> getAnimals(Long shelterId);
