@@ -48,6 +48,19 @@ public class Animal {
         this.name = name;
         this.age = age;
     }
+    public Animal(Long id, AnimalType animalType, String name, Integer age) {
+        this.id =id;
+        this.animalType = animalType;
+        this.name = name;
+        this.age = age;
+    }
+    public Animal(Long id, AnimalType animalType, String name, Integer age, Long shelterId) {
+        this.id =id;
+        this.animalType = animalType;
+        this.name = name;
+        this.age = age;
+        this.shelterId = shelterId;
+    }
     public Animal(AnimalType animalType, String name, Integer age, Owner owner) {
         this.animalType = animalType;
         this.name = name;

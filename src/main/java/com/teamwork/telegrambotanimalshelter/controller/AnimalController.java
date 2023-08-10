@@ -80,16 +80,10 @@ public class AnimalController {
     @PutMapping
     @Operation(summary = "Обновить информацию о животном")
     public ResponseEntity<Animal> update(@RequestParam Long id,
+                                         @RequestParam(required = false) AnimalType animalType,
                                          @RequestParam(required = false) String name,
                                          @RequestParam(required = false) Integer age) {
-        Animal animal = animalService.getById(id);
-        if (name != null) {
-            animal.setName(name);
-        }
-        if (age != null) {
-            animal.setAge(age);
-        }
-        animalService.update(animal);
+        Animal animal = animalService.update(new Animal(id, animalType, name, age));
         return ResponseEntity.ok(animal);
     }
 
