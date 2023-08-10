@@ -60,4 +60,9 @@ private final AnimalRepository animalRepository;
     public List<Animal> getAnimals(Long shelterId) {
         return animalRepository.getAnimalsByShelterId(shelterId);
     }
+
+    @Override
+    public Shelter getByShelterType(AnimalType type) {
+        return shelterRepository.getShelterByShelterType(type);
+    }
 }
