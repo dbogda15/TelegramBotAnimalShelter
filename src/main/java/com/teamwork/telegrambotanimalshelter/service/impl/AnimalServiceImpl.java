@@ -8,7 +8,6 @@ import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import com.teamwork.telegrambotanimalshelter.repository.ShelterRepository;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
-import com.teamwork.telegrambotanimalshelter.service.OwnerService;
 import com.teamwork.telegrambotanimalshelter.service.ShelterService;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -18,11 +17,9 @@ import java.util.*;
 public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository animalRepository;
     private final ShelterService shelterService;
-    private final OwnerService ownerService;
-    public AnimalServiceImpl(AnimalRepository animalRepository, ShelterService shelterService, OwnerService ownerService) {
+    public AnimalServiceImpl(AnimalRepository animalRepository, ShelterService shelterService) {
         this.animalRepository = animalRepository;
         this.shelterService = shelterService;
-        this.ownerService = ownerService;
     }
 
     @Override
@@ -60,13 +57,13 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public Animal setOwner(Long id, Long ownerId) {
+    public Animal setOwner(Long id, Owner owner) {
         Optional<Animal> animal = animalRepository.findById(id);
         if (animal.isEmpty()){
            throw new NotFoundException("Такого животного не существует!");
         }
         Animal existAnimal = animal.get();
-        existAnimal.setOwner(ownerService.getById(ownerId));
+        existAnimal.setOwner(owner);
         return animalRepository.save(existAnimal);
     }
 

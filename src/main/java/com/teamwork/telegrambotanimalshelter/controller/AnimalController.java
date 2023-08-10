@@ -2,8 +2,11 @@ package com.teamwork.telegrambotanimalshelter.controller;
 
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
+import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
+import com.teamwork.telegrambotanimalshelter.service.OwnerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +18,11 @@ import java.util.List;
 @RequestMapping("/animals")
 public class AnimalController {
     private final AnimalService animalService;
+    private final OwnerService ownerService;
 
-    public AnimalController(AnimalService animalService) {
+    public AnimalController(AnimalService animalService, OwnerService ownerService) {
         this.animalService = animalService;
+        this.ownerService = ownerService;
     }
 
     @PostMapping
@@ -31,7 +36,10 @@ public class AnimalController {
     public ResponseEntity<Animal> create(@RequestParam AnimalType animalType,
                                          @RequestParam String name,
                                          @RequestParam Integer age) {
-        Animal newAnimal = new Animal(animalType, name, age);
+        Animal newAnimal = new Animal();
+        newAnimal.setAnimalType(animalType);
+        newAnimal.setName(name);
+        newAnimal.setAge(age);
         animalService.create(newAnimal);
         return ResponseEntity.ok(newAnimal);
     }
@@ -40,6 +48,12 @@ public class AnimalController {
     @Operation(summary = "Удаление животного из БД по его ID")
     public void delete(@RequestParam Long id) {
         animalService.delete(id);
+    }
+
+    @GetMapping("/owner")
+    @Operation(summary = "Найти владельца по ID животного")
+    public ResponseEntity<Owner> getOwnerByAnimalId(@RequestParam Long animalId) {
+        return ResponseEntity.ok(animalService.getById(animalId).getOwner());
     }
 
     @GetMapping(value = "/getAll")
@@ -77,7 +91,7 @@ public class AnimalController {
     @Operation(summary = "Назначить животному хозяина")
     public ResponseEntity<Animal> setOwnerId(@RequestParam Long id,
                                              @RequestParam Long owner_id) {
-        Animal updated = animalService.setOwner(id, owner_id);
+        Animal updated = animalService.setOwner(id, ownerService.getById(owner_id));
         return ResponseEntity.ok(updated);
     }
 

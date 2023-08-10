@@ -59,7 +59,7 @@ public interface AnimalService {
      * @param owner
      * @return
      */
-    Animal setOwner(Long id, Long ownerId);
+    Animal setOwner(Long id, Owner owner);
 
     /**
      * Получение списка животных по конкретному типу
