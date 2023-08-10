@@ -33,7 +33,6 @@ class AnimalServiceImplTest {
     public static final String CORRECT_OWNER_PHONE = "89991234567";
     public static final String CORRECT_OWNER_NAME = "Name";
     public static final AnimalType OWNER_TYPE = CORRECT_TYPE;
-    public static final List<Animal> ANIMAL_LIST = new ArrayList<>();
     public static final Owner CORRECT_OWNER = new Owner(CORRECT_OWNER_ID, CHAT_ID, CORRECT_OWNER_NAME, CORRECT_OWNER_PHONE, OWNER_TYPE, new ArrayList<>(), new ArrayList<>());
     public static final Animal CORRECT_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER, SHELTER_ID);
     public static final Animal CORRECT_ANIMAL_WITHOUT_OWNER = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE);

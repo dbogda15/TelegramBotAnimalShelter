@@ -2,6 +2,7 @@ package com.teamwork.telegrambotanimalshelter.service.impl;
 
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
+import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import com.teamwork.telegrambotanimalshelter.repository.ShelterRepository;
@@ -18,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.teamwork.telegrambotanimalshelter.constants.AnimalServiceImplConstants.*;
-import static com.teamwork.telegrambotanimalshelter.constants.AnimalServiceImplConstants.CORRECT_ID;
+import static com.teamwork.telegrambotanimalshelter.service.impl.AnimalServiceImplTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +35,11 @@ class ShelterServiceImplTest {
     ShelterServiceImpl out;
 
     public static final Long CORRECT_ID = 1L;
-
+    public static final Long SHELTER_ID = 1L;
+    public static final Long CHAT_ID = 123L;
+    public static final String CORRECT_NAME = "Cat";
+    public static final Integer CORRECT_AGE = 1;
+    public static final AnimalType CORRECT_TYPE = AnimalType.CAT;
     private static final String NAME = "name";
     private static final String UPDATE_NAME = "names";
     private static final String LOCATION = "location";
@@ -45,6 +49,8 @@ class ShelterServiceImplTest {
     private static final String SAFETY_ADVICE = "safetyAdvice";
     private static final AnimalType SHELTER_TYPE = AnimalType.CAT;
     private static final List<Animal> ANIMAL_LIST = new ArrayList<>();
+    public static final Owner CORRECT_OWNER = new Owner(CORRECT_OWNER_ID, CHAT_ID, CORRECT_OWNER_NAME, CORRECT_OWNER_PHONE, OWNER_TYPE, new ArrayList<>(), new ArrayList<>());
+
     private static final Shelter CORRECT_SHELTER = new Shelter(CORRECT_ID, NAME, LOCATION, TIMETABLE, ABOUT_ME, SECURITY,
             SAFETY_ADVICE, SHELTER_TYPE, ANIMAL_LIST);
     private static final Shelter UPDATE_SHELTER = new Shelter(UPDATE_NAME, LOCATION, TIMETABLE, ABOUT_ME, SECURITY,
