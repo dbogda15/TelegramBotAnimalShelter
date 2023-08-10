@@ -37,7 +37,7 @@ private final AnimalRepository animalRepository;
     @Override
     public Shelter delete(Long id) {
         Shelter shelter = getById(id);
-        shelterRepository.deleteShelter(shelter);
+        shelterRepository.delete(shelter);
         return shelter;
     }
 

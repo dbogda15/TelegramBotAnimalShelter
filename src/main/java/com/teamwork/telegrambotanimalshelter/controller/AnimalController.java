@@ -2,11 +2,8 @@ package com.teamwork.telegrambotanimalshelter.controller;
 
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
-import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
-import com.teamwork.telegrambotanimalshelter.service.OwnerService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +15,9 @@ import java.util.List;
 @RequestMapping("/animals")
 public class AnimalController {
     private final AnimalService animalService;
-    private final OwnerService ownerService;
 
-    public AnimalController(AnimalService animalService, OwnerService ownerService) {
+    public AnimalController(AnimalService animalService) {
         this.animalService = animalService;
-        this.ownerService = ownerService;
     }
 
     @PostMapping
