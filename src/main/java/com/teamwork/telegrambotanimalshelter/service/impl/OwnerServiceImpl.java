@@ -8,8 +8,11 @@ import com.teamwork.telegrambotanimalshelter.repository.OwnerRepository;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
 import com.teamwork.telegrambotanimalshelter.service.OwnerService;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class OwnerServiceImpl implements OwnerService {
     private final OwnerRepository ownerRepository;
@@ -38,7 +41,11 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override
     public Owner getById(Long id) {
-        return ownerRepository.findById(id).get();
+        Optional<Owner> owner = ownerRepository.findById(id);
+        if (owner.isEmpty()){
+            throw new NotFoundException("Владельца с таким ID не существует!");
+        }
+        return owner.get();
     }
 
     @Override
@@ -53,8 +60,15 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public void delete(Long id) {
-        ownerRepository.delete(getById(id));
+    public String delete(Long id) {
+        String message;
+        Optional<Owner> owner = ownerRepository.findById(id);
+        if(owner.isPresent()){
+            ownerRepository.delete(owner.get());
+            message = "Владелец удален";
+        }
+        else throw new NotFoundException("Владельца с таким ID не существует!");
+        return message;
     }
 
     @Override

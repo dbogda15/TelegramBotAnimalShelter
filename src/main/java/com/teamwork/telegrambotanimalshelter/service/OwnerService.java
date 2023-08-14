@@ -44,7 +44,7 @@ public interface OwnerService {
      * Удвление владельца (Owner) из БД по его ID
      * @param id
      */
-    void delete(Long id);
+    String delete(Long id);
 
     /**
      * Получение списка всех владельцев
