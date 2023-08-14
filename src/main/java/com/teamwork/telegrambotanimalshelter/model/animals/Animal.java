@@ -63,6 +63,7 @@ public class Animal {
         this.age = age;
         this.shelterId = shelterId;
     }
+
     public Animal(Long id, AnimalType animalType, String name, Integer age, Owner owner) {
         this.id =id;
         this.animalType = animalType;

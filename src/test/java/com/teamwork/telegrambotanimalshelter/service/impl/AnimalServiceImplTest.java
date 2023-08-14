@@ -3,8 +3,9 @@ package com.teamwork.telegrambotanimalshelter.service.impl;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
+import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
-import com.teamwork.telegrambotanimalshelter.repository.ShelterRepository;
+import com.teamwork.telegrambotanimalshelter.service.ShelterService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,14 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AnimalServiceImplTest {
+
+    @Mock
+    AnimalRepository animalRepository;
+    @Mock
+    ShelterService shelterService;
+
+    @InjectMocks
+    AnimalServiceImpl out;
     public static final Long CORRECT_ID = 1L;
     public static final Long INCORRECT_ID = -1L;
     public static final Long SHELTER_ID = 1L;
@@ -35,14 +44,11 @@ class AnimalServiceImplTest {
     public static final AnimalType OWNER_TYPE = CORRECT_TYPE;
     public static final Owner CORRECT_OWNER = new Owner(CORRECT_OWNER_ID, CHAT_ID, CORRECT_OWNER_NAME, CORRECT_OWNER_PHONE, OWNER_TYPE, new ArrayList<>(), new ArrayList<>());
     public static final Animal CORRECT_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER, SHELTER_ID);
-    public static final Animal CORRECT_ANIMAL_WITHOUT_OWNER = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE);
-
+    public static final Animal ANIMAL_WITHOUT_OWNER = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, SHELTER_ID);
+    public static final Animal ANIMAL_WITHOUT_SHELTER = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER);
+    public static final Shelter SHELTER = new Shelter(SHELTER_ID, "X", "X", "X", "X", "X", "X", AnimalType.CAT, new ArrayList<>());
     public static final Animal FREE_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, null, null);
-    @Mock
-    AnimalRepository animalRepository;
 
-    @InjectMocks
-    AnimalServiceImpl out;
 
     @Test
     @DisplayName("Получение животного по его ID")
@@ -166,9 +172,28 @@ class AnimalServiceImplTest {
     @DisplayName("Корректная настройка владельца")
     void shouldReturnCorrectAnimalWhenSetOwner(){
         when(animalRepository.findById(CORRECT_ID))
-                .thenReturn(Optional.of(CORRECT_ANIMAL_WITHOUT_OWNER));
+                .thenReturn(Optional.of(ANIMAL_WITHOUT_OWNER));
+        when(out.setOwner(ANIMAL_WITHOUT_OWNER.getId(), CORRECT_OWNER))
+                .thenReturn(CORRECT_ANIMAL);
 
-        assertEquals(CORRECT_ANIMAL, out.setOwner(CORRECT_ID, CORRECT_OWNER));
+        Animal result = out.setOwner(ANIMAL_WITHOUT_OWNER.getId(), CORRECT_OWNER);
+        assertEquals(CORRECT_ANIMAL, result);
+
+        verify(animalRepository, times(1)).save(CORRECT_ANIMAL);
+    }
+
+    @Test
+    @DisplayName("Корректная настройка приюта")
+    void shouldReturnCorrectAnimalWhenSetShelter(){
+        when(animalRepository.findById(CORRECT_ID))
+                .thenReturn(Optional.of(ANIMAL_WITHOUT_SHELTER));
+        when(shelterService.getById(SHELTER_ID))
+                .thenReturn(SHELTER);
+        when(out.setShelterId(ANIMAL_WITHOUT_SHELTER.getId(), SHELTER_ID))
+                .thenReturn(CORRECT_ANIMAL);
+
+        Animal result = out.setShelterId(ANIMAL_WITHOUT_SHELTER.getId(), SHELTER_ID);
+        assertEquals(CORRECT_ANIMAL, result);
 
         verify(animalRepository, times(1)).save(CORRECT_ANIMAL);
     }
