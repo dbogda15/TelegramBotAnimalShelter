@@ -75,6 +75,13 @@ public class Owner {
         this.phone = phone;
     }
 
+    public Owner(Long id, Long chatId, String name, String phone) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+    }
+
     @Override
     public String toString() {
         return "id = " + id + ", name= " + name + ", phone='" + phone +
