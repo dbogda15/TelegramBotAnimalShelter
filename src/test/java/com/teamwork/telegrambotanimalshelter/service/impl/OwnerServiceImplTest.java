@@ -43,6 +43,7 @@ class OwnerServiceImplTest {
     static final Animal CAT =  new Animal(ANIMAL_ID, AnimalType.CAT, "Cat", 5);
     static final Owner OWNER_WITHOUT_CAT = new Owner(CAT_OWNER_ID, CAT_OWNER_CHAT_ID, "Name", "89177534345");
     static final Owner CAT_OWNER = new Owner(CAT_OWNER_ID, CAT_OWNER_CHAT_ID, "Name", "89177534345", AnimalType.CAT, List.of(CAT), new ArrayList<>());
+    static final Animal BUSY_CAT = new Animal(3L, AnimalType.CAT,"Barsik", 5, CORRECT_OWNER);
 
     @Test
     @DisplayName("Создание нового владельца")
@@ -162,5 +163,14 @@ class OwnerServiceImplTest {
         assertEquals(List.of(CAT), result);
 
         verify(ownerRepository, times(1)).findById(CAT_OWNER.getId());
+    }
+
+    @Test
+    @DisplayName("Проверка исключения когда владельца не существует")
+    void shouldThrowNotFoundExceptionWhenOwnerDoesntExist(){
+        when(ownerRepository.findById(100L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, ()-> out.getById(100L));
     }
 }
