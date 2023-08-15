@@ -26,11 +26,9 @@ import java.util.List;
 })
 public class TrialPeriodController {
     private final TrialPeriodService trialPeriodService;
-    private final AnimalService animalService;
 
-    public TrialPeriodController(TrialPeriodService trialPeriodService, AnimalService animalService) {
+    public TrialPeriodController(TrialPeriodService trialPeriodService) {
         this.trialPeriodService = trialPeriodService;
-        this.animalService = animalService;
     }
 
     @PostMapping
@@ -38,9 +36,9 @@ public class TrialPeriodController {
     TrialPeriod create(@RequestParam @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheStart,
                        @RequestParam Long ownerId,
                        @RequestParam Long animalId,
+                       @RequestParam AnimalType animalType,
                        @RequestParam TrialPeriodType type
                        ) {
-        AnimalType animalType = animalService.getById(animalId).getAnimalType();
         return trialPeriodService.create(new TrialPeriod(dateOfTheStart, dateOfTheStart.plusDays(30),
                 dateOfTheStart.minusDays(1), ownerId, animalId, animalType, new ArrayList<>(), type));
     }
@@ -48,7 +46,7 @@ public class TrialPeriodController {
     @DeleteMapping
     @Operation(summary = "")
     void delete(@RequestParam Long id){
-        trialPeriodService.delete(id);
+        trialPeriodService.deleteById(id);
     }
 
     @GetMapping("/id")
@@ -71,13 +69,15 @@ public class TrialPeriodController {
 
     @PutMapping
     @Operation(summary = "")
-    TrialPeriod update(@RequestParam @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheStart,
-                       @RequestParam @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheEnd,
-                       @RequestParam @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheLAstReport,
-                       @RequestParam Long ownerId,
-                       @RequestParam Long animalId,
-                       @RequestParam TrialPeriodType type) {
-        AnimalType animalType = animalService.getById(animalId).getAnimalType();
-        return trialPeriodService.update(new TrialPeriod(dateOfTheStart, dateOfTheEnd, dateOfTheLAstReport, ownerId, animalId, animalType, new ArrayList<>(), type));
+    TrialPeriod update(@RequestParam Long id,
+                       @RequestParam (required = false) @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheStart,
+                       @RequestParam (required = false) @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheEnd,
+                       @RequestParam (required = false) @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheLastReport,
+                       @RequestParam (required = false) Long ownerId,
+                       @RequestParam (required = false) Long animalId,
+                       @RequestParam (required = false) AnimalType animalType,
+                       @RequestParam (required = false) TrialPeriodType type) {
+        return trialPeriodService.update(new TrialPeriod(id, dateOfTheStart, dateOfTheEnd, dateOfTheLastReport, ownerId, animalId,
+                animalType, new ArrayList<>(), type));
     }
 }
