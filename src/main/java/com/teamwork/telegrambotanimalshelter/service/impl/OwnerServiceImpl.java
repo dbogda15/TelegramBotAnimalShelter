@@ -1,15 +1,20 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
 import com.teamwork.telegrambotanimalshelter.exceptions.IncorrectArgumentException;
+import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
+import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.repository.OwnerRepository;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
 import com.teamwork.telegrambotanimalshelter.service.OwnerService;
+import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,18 +22,23 @@ import java.util.Optional;
 public class OwnerServiceImpl implements OwnerService {
     private final OwnerRepository ownerRepository;
     private final AnimalService animalService;
+    private final TrialPeriodService trialPeriodService;
 
-    public OwnerServiceImpl(OwnerRepository ownerRepository, AnimalService animalService) {
+    public OwnerServiceImpl(OwnerRepository ownerRepository, AnimalService animalService, TrialPeriodService trialPeriodService) {
         this.ownerRepository = ownerRepository;
         this.animalService = animalService;
+        this.trialPeriodService = trialPeriodService;
     }
 
     @Override
-    public Owner create(Owner owner, Long animalId) {
+    public Owner create(Long  ownerId, Long animalId) {
         if (animalService.getById(animalId).getOwner() != null) {
             throw new IncorrectArgumentException("У этого животного есть хозяин!");
         }
+        trialPeriodService.create(new TrialPeriod(LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),
+                        ownerId, animalId, animalService.getById(animalId).getAnimalType(), new ArrayList<>(), TrialPeriodType.IN_PROGRESS));
         AnimalType animalType = animalService.getById(animalId).getAnimalType();
+        Owner owner =getById(ownerId);
         owner.setOwnerType(animalType);
         animalService.getById(animalId).setOwner(owner);
         return ownerRepository.save(owner);
