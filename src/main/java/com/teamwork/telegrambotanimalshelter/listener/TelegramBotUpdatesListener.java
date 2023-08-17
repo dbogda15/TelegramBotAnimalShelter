@@ -4,28 +4,35 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.*;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
 import com.teamwork.telegrambotanimalshelter.constant.Constants;
-import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
+import com.teamwork.telegrambotanimalshelter.constant.Keyboard;
+import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.replymarkup.ReplyMarkUp;
 import com.teamwork.telegrambotanimalshelter.repository.OwnerRepository;
-import com.teamwork.telegrambotanimalshelter.service.AnimalService;
-import com.teamwork.telegrambotanimalshelter.service.OwnerService;
-import com.teamwork.telegrambotanimalshelter.constant.Keyboard;
-import com.teamwork.telegrambotanimalshelter.service.ShelterService;
+import com.teamwork.telegrambotanimalshelter.service.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
-
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -37,8 +44,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final TelegramBot telegramBot;
     private final OwnerService ownerService;
     private final OwnerRepository ownerRepository;
-    private final AnimalService animalService;
     private final ShelterService shelterService;
+    private final ReportService reportService;
+    private final TrialPeriodService trialPeriodService;
+
     @PostConstruct
     public void init() {
         telegramBot.setUpdatesListener(this);
@@ -64,7 +73,20 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if(!ownerRepository.existsOwnerByChatId(chatId)){
                     ownerService.create(new Owner(chatId, chat.firstName()));
                 }
+
                 Owner owner = ownerRepository.getOwnerByChatId(chatId);
+                if (message.photo() != null) {
+                    getReport(message);
+                    return;
+                }
+
+                Pattern pattern = Pattern.compile("(\\d+)");
+                Matcher matcher = pattern.matcher(text);
+                if (matcher.find()) {
+                    getContact(chatId, text);
+                    return;
+                }
+
                 if (message.chat().id() != null) {
                     switch (text) {
                         case "/start", "К выбору приютов" -> {
@@ -96,7 +118,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                         case Keyboard.CONTACT_DETAILS -> {
-                            sendMessage(chatId, "Пожалуйста, введите свой номер телефона в формате +79171234123");
+                            sendMessage(chatId, "Пожалуйста, введите свой номер телефона в формате 89171234123");
                         }
                         case Keyboard.ABOUT_THE_SHELTER -> {
                             AnimalType type = owner.getOwnerType();
@@ -116,8 +138,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                 sendMessage(chatId, shelterService.getByShelterType(type).getTimetable());
                             }
                         }
-
-
+                        case Keyboard.SEND_REPORT_FORM -> {
+                            logger.info("Отправили форму отчета - ID:{}", chatId);
+                            sendReportExample(chatId);
+                        }
 
                     }
                 }
@@ -143,5 +167,66 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         replyMarkup.sendMessageStage(chatId);
     }
 
+    private void getReport(Message message) {
+        PhotoSize photoSize = message.photo()[message.photo().length - 1];
+        String caption = message.caption();
+        Long chatId = message.chat().id();
+        Owner owner = ownerRepository.getOwnerByChatId(chatId);
+        try {
+            reportService.createFromTelegram(photoSize.fileId(), caption, owner.getId());
+            sendMessage(chatId, "Ваш отчёт принят.");
+        } catch (Exception e) {
+            sendMessage(chatId, e.getMessage());
+        }
+    }
 
+    private void getContact(Long chatId, String text) {
+        Pattern pattern = Pattern.compile("^(\\d{11})$");
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            Owner byId = ownerService.getByChatId(chatId);
+            byId.setPhone(matcher.group(1));
+            ownerService.update(byId);
+            sendMessage(chatId, "Телефон принят");
+        } else {
+            sendMessage(chatId, "Неверно ввел");
+        }
+        logger.info("Прилетел телефон - ID:{} тел:{} ", chatId, text);
+    }
+
+    private void sendPhoto(Long chatId) {
+        Owner owner = ownerRepository.getOwnerByChatId(chatId);
+        GetFile getFile = new GetFile(reportService.getById(chatId).getPhotoId());
+        GetFileResponse getFileResponse = telegramBot.execute(getFile);
+        TrialPeriod trialPeriod = trialPeriodService.findById(reportService.getById(chatId).getTrialPeriodId());
+        if (getFileResponse.isOk()) {
+            try {
+                byte[] image = telegramBot.getFileContent(getFileResponse.file());
+                SendPhoto sendPhoto = new SendPhoto(chatId, image);
+                sendPhoto.caption("Id владельца: " + trialPeriod.getOwnerId() + "\n" +
+                        "Id испытательного срока: " + trialPeriod.getId() + "\n" +
+                        "Id отчёта:" + chatId);
+                telegramBot.execute(sendPhoto);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void sendReportExample(Long chatId) {
+        try {
+            byte[] photo = Files.readAllBytes(
+                    Paths.get(Objects.requireNonNull(UpdatesListener.class.getResource("/images/cat.jpg")).toURI())
+            );
+            SendPhoto sendPhoto = new SendPhoto(chatId, photo);
+            sendPhoto.caption("""
+                    Рацион питания: ваш текст;
+                    Общее самочувствие: ваш текст;
+                    Изменение поведения: ваш текст;
+                    """);
+            telegramBot.execute(sendPhoto);
+        } catch (IOException | URISyntaxException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
 }
