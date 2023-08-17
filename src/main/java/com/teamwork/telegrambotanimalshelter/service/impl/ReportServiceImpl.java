@@ -5,7 +5,6 @@ import com.teamwork.telegrambotanimalshelter.exceptions.ObjectAlreadyExistsExcep
 import com.teamwork.telegrambotanimalshelter.model.Report;
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
-import com.teamwork.telegrambotanimalshelter.model.Report;
 import com.teamwork.telegrambotanimalshelter.repository.ReportRepository;
 import com.teamwork.telegrambotanimalshelter.service.ReportService;
 import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
@@ -42,7 +41,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Report createFromTelegram(String photoId, String message, Long id) {
+    public void createFromTelegram(String photoId, String message, Long id) {
         TrialPeriod trialPeriod = trialPeriodService.findAllByOwnerId(id).stream()
                 .filter(trialPeriod1 -> trialPeriod1.getPeriodType().equals(TrialPeriodType.IN_PROGRESS))
                 .findFirst().get();
@@ -56,7 +55,6 @@ public class ReportServiceImpl implements ReportService {
                 messagesParts.get(2), LocalDate.now(), trialPeriod.getId()));
         trialPeriod.setLastDateOfReport(LocalDate.now());
         trialPeriodService.update(trialPeriod);
-        return report;
     }
 
     @Override
