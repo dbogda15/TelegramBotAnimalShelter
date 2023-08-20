@@ -34,4 +34,5 @@ public class Keyboard {
     public static final String KITTEN_SETUP = "Обустройство котенка";
     public static final String ARRANGEMENT_OF_CAT_WITH_DISABILITIES = "Обустройство кошки с ограниченными возможностями";
     public static final String BACK_TO_ALL_ABOUT_CATS = "Назад в \"Все о кошках\"";
+
 }
