@@ -29,8 +29,7 @@ public class ReplyMarkUp {
                 new KeyboardButton(Keyboard.SEND_REPORT_FORM));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.CALL_A_VOLUNTEER));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.MAIN_MENU));
-
-        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Выберите:");
+        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Выберите приют:");
     }
 
     public void sendMenuCat(long chatId) {
@@ -42,6 +41,7 @@ public class ReplyMarkUp {
                 new KeyboardButton(Keyboard.TB_GUIDELINES),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS_OF_THE_GUARD));
+        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.FAQ));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.CALL_A_VOLUNTEER));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.MAIN_MENU));
 
@@ -57,6 +57,7 @@ public class ReplyMarkUp {
                 new KeyboardButton(Keyboard.TB_GUIDELINES),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS_OF_THE_GUARD));
+        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.FAQ));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.CALL_A_VOLUNTEER));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.MAIN_MENU));
 

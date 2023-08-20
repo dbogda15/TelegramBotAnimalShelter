@@ -3,6 +3,7 @@ package com.teamwork.telegrambotanimalshelter.constant;
 public class Keyboard {
 
     public static final String MAIN_MENU = "Главное меню";
+    public static final String FAQ = "Часто задаваемые вопросы";
     public static final String WORK_SCHEDULE = "Расписание работы";
     public static final String CAT_SHELTER = "Приют для кошек";
     public static final String DOG_SHELTER = "Приют для собак";

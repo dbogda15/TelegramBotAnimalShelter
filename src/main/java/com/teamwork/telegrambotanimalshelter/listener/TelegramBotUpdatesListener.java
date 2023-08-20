@@ -77,16 +77,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Long chatId = message.chat().id();
                 Chat chat = message.chat();
                 String text = message.text();
+                        Owner owner = ownerRepository.getOwnerByChatId(chatId);
+                        if (message.photo() != null) {
+                            getReport(message);
+                            return;
+                        }
+                AnimalType type = owner.getOwnerType();
                 if(!ownerRepository.existsOwnerByChatId(chatId)){
                     ownerService.create(new Owner(chatId, chat.firstName()));
                 }
-
-                Owner owner = ownerRepository.getOwnerByChatId(chatId);
-                if (message.photo() != null) {
-                    getReport(message);
-                    return;
-                }
-
                 Pattern pattern = Pattern.compile("(\\d+)");
                 Matcher matcher = pattern.matcher(text);
                 if (matcher.find()) {
@@ -103,7 +102,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         case Keyboard.CAT_SHELTER -> sendMenuStage(AnimalType.CAT, chatId);
                         case Keyboard.DOG_SHELTER -> sendMenuStage(AnimalType.DOG, chatId);
                         case Keyboard.INFORMATION_ABOUT_SHELTER-> {
-                            AnimalType type = owner.getOwnerType();
                             if (type.equals(AnimalType.CAT)){
                                 replyMarkup.sendMenuCat(chatId);
                             }
@@ -118,17 +116,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                         case Keyboard.CONTACT_DETAILS_OF_THE_GUARD -> {
                             if (owner.getOwnerType().equals(AnimalType.DOG)){
-                                sendMessage(chatId, shelterService.getByShelterType(AnimalType.DOG).getSecurity());
+                                sendMessage(chatId, Constants.GUARDS_INFO_DOG);
                             }
                             if (owner.getOwnerType().equals(AnimalType.CAT)){
-                                sendMessage(chatId, shelterService.getByShelterType(AnimalType.CAT).getSecurity());
+                                sendMessage(chatId, Constants.GUARDS_INFO_CAT);
                             }
                         }
                         case Keyboard.CONTACT_DETAILS -> {
                             sendMessage(chatId, "Пожалуйста, введите свой номер телефона в формате 89171234123");
                         }
                         case Keyboard.ABOUT_THE_SHELTER -> {
-                            AnimalType type = owner.getOwnerType();
                             if(type.equals(AnimalType.DOG)){
                                 sendMessage(chatId, Constants.DOG_SHELTER_INFO);
                             }
@@ -137,7 +134,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                         case Keyboard.WORK_SCHEDULE -> {
-                            AnimalType type = owner.getOwnerType();
                             if (type.equals(AnimalType.DOG)){
                                 sendMessage(chatId, shelterService.getByShelterType(type).getTimetable());
                             }
@@ -147,7 +143,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                         case Keyboard.SEND_REPORT_FORM -> {
                             logger.info("Отправили форму отчета - ID:{}", chatId);
-                            AnimalType type = owner.getOwnerType();
                             sendReportExample(chatId, type);
                         }
                         case Keyboard.LIST_OF_CATS -> {
@@ -175,6 +170,67 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                 return;
                             }
                             sendMessage(chatId,getStringFromList(dogList));
+                        }
+                        case Keyboard.FAQ -> {
+                            logger.info("Часто задаваемые вопросы - ID:{}", chatId);
+                            if (type.equals(AnimalType.CAT)) {
+                                replyMarkup.menuCat(chatId);
+                            } else if(type.equals(AnimalType.DOG)) {
+                                replyMarkup.menuDog(chatId);
+                            }
+                        }
+                        case Keyboard.BACK_TO_ALL_ABOUT_CATS -> {
+                            logger.info("Все о кошках - ID:{}", chatId);
+                            replyMarkup.menuCat(chatId);
+                        }
+                        case Keyboard.BACK_TO_ALL_ABOUT_DOGS -> {
+                            logger.info("Все о собаках - ID:{}", chatId);
+                            replyMarkup.menuDog(chatId);
+                        }
+                        case Keyboard.RULES_FOR_DATING_A_CAT, Keyboard.RULES_FOR_DATING_A_DOG -> {
+                            logger.info("Правила знакомства - ID:{}", chatId);
+                            sendMessage(chatId, Constants.ANIMAL_DATING_RULES);
+                        }
+                        case Keyboard.CAT_CARRIAGE, Keyboard.DOG_CARRIAGE -> {
+                            logger.info("Перевозка - ID:{}", chatId);
+                            sendMessage(chatId, Constants.TRANSPORTATION_OF_THE_ANIMAL);
+                        }
+                        case Keyboard.REQUIRED_DOCUMENTS -> {
+                            logger.info("Необходимые документы - ID:{}", chatId);
+                            sendMessage(chatId, Constants.REQUIRED_DOCUMENTS);
+                        }
+                        case Keyboard.LIST_OF_REASONS -> {
+                            logger.info("Список причин для отказа выдачи питомца - ID:{}", chatId);
+                            sendMessage(chatId, Constants.LIST_OF_REASON_FOR_DENY);
+                        }
+                        case Keyboard.RECOMMENDATIONS_FOR_DOGS -> {
+                            logger.info("Рекомендации для собак - ID:{}", chatId);
+                            replyMarkup.rulesForDogs(chatId);
+                        }
+                        case Keyboard.RECOMMENDATIONS_FOR_CATS -> {
+                            logger.info("Рекомендации для кошек - ID:{}", chatId);
+                            replyMarkup.rulesForCats(chatId);
+                        }
+                        case Keyboard.PUPPY_SETUP, Keyboard.KITTEN_SETUP -> {
+                            logger.info("Обустройство щенка/котенка - ID:{}", chatId);
+                            sendMessage(chatId, Constants.RECOMMENDATIONS_HOME_IMPROVEMENT_KITTEN_PUPPY);
+                        }
+                        case Keyboard.ADULT_DOG_SETUP, Keyboard.ADULT_CAT_SETUP -> {
+                            logger.info("Обустройство взрослого животного - ID:{}", chatId);
+                            sendMessage(chatId, Constants.RECOMMENDATIONS_HOME_IMPROVEMENT_ADULT_ANIMAL);
+                        }
+                        case Keyboard.ARRANGEMENT_OF_DOG_WITH_DISABILITIES,
+                                Keyboard.ARRANGEMENT_OF_CAT_WITH_DISABILITIES -> {
+                            logger.info("Обустройство животного с ограниченными возможностями - ID:{}", chatId);
+                            sendMessage(chatId, Constants.RECOMMENDATIONS_HOME_IMPROVEMENT_DISABLED_ANIMAL);
+                        }
+                        case Keyboard.DOG_HANDLERS_ADVICE -> {
+                            logger.info("Советы кинолога - ID:{}", chatId);
+                            sendMessage(chatId, Constants.DOG_HANDLERS_ADVICE);
+                        }
+                        case Keyboard.PROVEN_CYNOLOGISTS -> {
+                            logger.info("Проверенные кинологи для обращения - ID:{}", chatId);
+                            sendMessage(chatId, Constants.DOG_HANDLERS_CONTACTS);
                         }
                     }
                 }
