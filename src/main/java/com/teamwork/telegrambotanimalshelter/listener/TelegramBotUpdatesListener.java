@@ -147,7 +147,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                         case Keyboard.SEND_REPORT_FORM -> {
                             logger.info("Отправили форму отчета - ID:{}", chatId);
-                            sendReportExample(chatId);
+                            AnimalType type = owner.getOwnerType();
+                            sendReportExample(chatId, type);
                         }
                         case Keyboard.LIST_OF_CATS -> {
                             logger.info("Список кошек - ID:{}", chatId);
@@ -245,10 +246,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
     }
 
-    private void sendReportExample(Long chatId) {
+    private void sendReportExample(Long chatId, AnimalType animalType) {
+        String resource;
+        if(animalType == AnimalType.CAT){
+            resource = "/images/cat.jpg";
+        } else
+            resource = "/images/dog.jpg";
+
         try {
             byte[] photo = Files.readAllBytes(
-                    Paths.get(Objects.requireNonNull(UpdatesListener.class.getResource("/images/cat.jpg")).toURI())
+                    Paths.get(Objects.requireNonNull(UpdatesListener.class.getResource(resource)).toURI())
             );
             SendPhoto sendPhoto = new SendPhoto(chatId, photo);
             sendPhoto.caption("""
