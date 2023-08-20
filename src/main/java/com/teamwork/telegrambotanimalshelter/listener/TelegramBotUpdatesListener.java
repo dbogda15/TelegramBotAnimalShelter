@@ -14,10 +14,14 @@ import com.pengrad.telegrambot.response.SendResponse;
 import com.teamwork.telegrambotanimalshelter.constant.Constants;
 import com.teamwork.telegrambotanimalshelter.constant.Keyboard;
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
+import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
+import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.replymarkup.ReplyMarkUp;
+import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import com.teamwork.telegrambotanimalshelter.repository.OwnerRepository;
+import com.teamwork.telegrambotanimalshelter.repository.ShelterRepository;
 import com.teamwork.telegrambotanimalshelter.service.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -47,6 +51,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final ShelterService shelterService;
     private final ReportService reportService;
     private final TrialPeriodService trialPeriodService;
+    private final AnimalService animalService;
+    private final ShelterRepository shelterRepository;
+    private final AnimalRepository animalRepository;
 
     @PostConstruct
     public void init() {
@@ -140,9 +147,35 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                         case Keyboard.SEND_REPORT_FORM -> {
                             logger.info("Отправили форму отчета - ID:{}", chatId);
-                            sendReportExample(chatId);
+                            AnimalType type = owner.getOwnerType();
+                            sendReportExample(chatId, type);
                         }
-
+                        case Keyboard.LIST_OF_CATS -> {
+                            logger.info("Список кошек - ID:{}", chatId);
+                            List<Animal> catList = shelterService.getByShelterType(AnimalType.CAT)
+                                    .getAnimalList()
+                                    .stream()
+                                    .filter(animal -> animal.getOwner() == null)
+                                    .toList();
+                            if (catList.isEmpty()) {
+                                sendMessage(chatId,"Кошек нет");
+                                return;
+                            }
+                            sendMessage(chatId,getStringFromList(catList));
+                        }
+                        case Keyboard.LIST_OF_DOGS -> {
+                            logger.info("Список собак - ID:{}", chatId);
+                            List<Animal> dogList = shelterService.getByShelterType(AnimalType.DOG)
+                                    .getAnimalList()
+                                    .stream()
+                                    .filter(animal -> animal.getOwner() == null)
+                                    .toList();
+                            if (dogList.isEmpty()) {
+                                sendMessage(chatId,"Собак нет");
+                                return;
+                            }
+                            sendMessage(chatId,getStringFromList(dogList));
+                        }
                     }
                 }
             });
@@ -213,10 +246,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
     }
 
-    private void sendReportExample(Long chatId) {
+    private void sendReportExample(Long chatId, AnimalType animalType) {
+        String resource;
+        if(animalType == AnimalType.CAT){
+            resource = "/images/cat.jpg";
+        } else
+            resource = "/images/dog.jpg";
+
         try {
             byte[] photo = Files.readAllBytes(
-                    Paths.get(Objects.requireNonNull(UpdatesListener.class.getResource("/images/cat.jpg")).toURI())
+                    Paths.get(Objects.requireNonNull(UpdatesListener.class.getResource(resource)).toURI())
             );
             SendPhoto sendPhoto = new SendPhoto(chatId, photo);
             sendPhoto.caption("""
@@ -229,4 +268,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             logger.error(e.getMessage(), e);
         }
     }
+
+    private String getStringFromList(List<?> list) {
+        StringBuilder sb = new StringBuilder();
+        list.forEach(o -> sb.append(o)
+                .append("\n")
+                .append("============").append("\n"));
+        return sb.toString();
+    }
+
 }
