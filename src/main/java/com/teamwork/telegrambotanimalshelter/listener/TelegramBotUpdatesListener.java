@@ -77,15 +77,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Long chatId = message.chat().id();
                 Chat chat = message.chat();
                 String text = message.text();
-                        Owner owner = ownerRepository.getOwnerByChatId(chatId);
-                        if (message.photo() != null) {
-                            getReport(message);
-                            return;
-                        }
+                String username = message.chat().username();
+
+                Owner owner = ownerRepository.getOwnerByChatId(chatId);
+                if (message.photo() != null) {
+                    getReport(message);
+                    return;
+                }
                 AnimalType type = owner.getOwnerType();
+
                 if(!ownerRepository.existsOwnerByChatId(chatId)){
                     ownerService.create(new Owner(chatId, chat.firstName()));
                 }
+
                 Pattern pattern = Pattern.compile("(\\d+)");
                 Matcher matcher = pattern.matcher(text);
                 if (matcher.find()) {
@@ -126,6 +130,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(chatId, "Пожалуйста, введите свой номер телефона в формате 89171234123");
                         }
                         case Keyboard.ABOUT_THE_SHELTER -> {
+                            AnimalType type = owner.getOwnerType();
                             if(type.equals(AnimalType.DOG)){
                                 sendMessage(chatId, Constants.DOG_SHELTER_INFO);
                             }
@@ -170,6 +175,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                 return;
                             }
                             sendMessage(chatId,getStringFromList(dogList));
+                        }
+                        case Keyboard.CALL_A_VOLUNTEER -> {
+                            AnimalType type = owner.getOwnerType();
+                            logger.info("Позвали волонтёра - ID: {}", chatId);
+                            sendMessage(chatId, "Мы направили ваш запрос волонтеру, скоро он с вами свяжется!");
+
+                            switch (type) {
+                                case CAT -> sendMessage(Constants.VOLUNTEER_1_ID, "Напиши этому человеку: @" + username);
+                                case DOG -> sendMessage(Constants.VOLUNTEER_2_ID, "Напиши этому человеку: @" + username);
+                                default -> sendMessage(chatId, "К сожалению, мы не можем с вами связаться, напишите волонтеру самостоятельно. Спасибо! "
+                                            + Constants.VOLUNTEER_INVITE);
+                            }
                         }
                         case Keyboard.FAQ -> {
                             logger.info("Часто задаваемые вопросы - ID:{}", chatId);

@@ -1,6 +1,9 @@
 package com.teamwork.telegrambotanimalshelter.constant;
 
 public class Constants {
+    public static final Long VOLUNTEER_1_ID = 4L;
+    public static final Long VOLUNTEER_2_ID = 1L;
+    public static final String VOLUNTEER_INVITE = "https://t.me/USERNAME";
 
     public static final String WELCOME = """
             В сложные время лучшее, что можно сделать, – помочь другим. Например, стать другом для четвероногого пушистика.

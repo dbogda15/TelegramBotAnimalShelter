@@ -18,8 +18,6 @@ public class ReplyMarkUp {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
                 new KeyboardButton(Keyboard.DOG_SHELTER),
                 new KeyboardButton(Keyboard.CAT_SHELTER));
-        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
-                new KeyboardButton(Keyboard.SEND_REPORT_FORM));
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, Constants.WELCOME);
     }
 
