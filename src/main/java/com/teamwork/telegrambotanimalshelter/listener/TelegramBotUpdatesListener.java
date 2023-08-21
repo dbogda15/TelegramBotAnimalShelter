@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.ForwardMessage;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
@@ -77,6 +78,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Long chatId = message.chat().id();
                 Chat chat = message.chat();
                 String text = message.text();
+                String username = message.chat().username();
                 if(!ownerRepository.existsOwnerByChatId(chatId)){
                     ownerService.create(new Owner(chatId, chat.firstName()));
                 }
@@ -175,6 +177,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                 return;
                             }
                             sendMessage(chatId,getStringFromList(dogList));
+                        }
+                        case Keyboard.CALL_A_VOLUNTEER -> {
+                            AnimalType type = owner.getOwnerType();
+                            logger.info("Позвали волонтёра - ID: {}", chatId);
+                            sendMessage(chatId, "Мы направили ваш запрос волонтеру, скоро он с вами свяжется!");
+
+                            switch (type) {
+                                case CAT -> sendMessage(Constants.VOLUNTEER_1_ID, "Напиши этому человеку: @" + username);
+                                case DOG -> sendMessage(Constants.VOLUNTEER_2_ID, "Напиши этому человеку: @" + username);
+                                default -> sendMessage(chatId, "К сожалению, мы не можем с вами связаться, напишите волонтеру самостоятельно. Спасибо! "
+                                            + Constants.VOLUNTEER_INVITE);
+                            }
                         }
                     }
                 }
