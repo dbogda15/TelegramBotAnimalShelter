@@ -1,9 +1,7 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
-import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.repository.TrialPeriodRepository;
-import com.teamwork.telegrambotanimalshelter.service.AnimalService;
 import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -14,21 +12,13 @@ import java.util.Optional;
 @Service
 public class TrialPeriodServiceImpl implements TrialPeriodService {
     private final TrialPeriodRepository trialPeriodRepository;
-    private final AnimalService animalService;
 
-    public TrialPeriodServiceImpl(TrialPeriodRepository trialPeriodRepository, AnimalService animalService) {
+    public TrialPeriodServiceImpl(TrialPeriodRepository trialPeriodRepository) {
         this.trialPeriodRepository = trialPeriodRepository;
-        this.animalService = animalService;
     }
 
     @Override
     public TrialPeriod create(TrialPeriod trialPeriod) {
-        if (trialPeriod.getAnimalType() == null) {
-            Long animalId = trialPeriod.getAnimalId();
-            AnimalType animalType = animalService.getById(animalId).getAnimalType();
-            trialPeriod.setAnimalType(animalType);
-            return trialPeriodRepository.save(trialPeriod);
-        }
         return trialPeriodRepository.save(trialPeriod);
     }
 

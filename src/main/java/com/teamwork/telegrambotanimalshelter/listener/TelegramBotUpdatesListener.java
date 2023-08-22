@@ -13,19 +13,19 @@ import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
 import com.teamwork.telegrambotanimalshelter.constant.Constants;
 import com.teamwork.telegrambotanimalshelter.constant.Keyboard;
+import com.teamwork.telegrambotanimalshelter.model.Report;
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
+import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
-import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.replymarkup.ReplyMarkUp;
-import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import com.teamwork.telegrambotanimalshelter.repository.OwnerRepository;
-import com.teamwork.telegrambotanimalshelter.repository.ShelterRepository;
 import com.teamwork.telegrambotanimalshelter.service.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -33,10 +33,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.lang.Long.parseLong;
 
 
 @Service
@@ -44,7 +48,6 @@ import java.util.regex.Pattern;
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
-
     private final TelegramBot telegramBot;
     private final OwnerService ownerService;
     private final OwnerRepository ownerRepository;
@@ -52,8 +55,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final ReportService reportService;
     private final TrialPeriodService trialPeriodService;
     private final AnimalService animalService;
-    private final ShelterRepository shelterRepository;
-    private final AnimalRepository animalRepository;
 
     @PostConstruct
     public void init() {
@@ -80,21 +81,45 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 String username = message.chat().username();
 
                 Owner owner = ownerRepository.getOwnerByChatId(chatId);
+
                 if (message.photo() != null) {
                     getReport(message);
                     return;
                 }
+
                 AnimalType type = owner.getOwnerType();
 
                 if(!ownerRepository.existsOwnerByChatId(chatId)){
-                    ownerService.create(new Owner(chatId, chat.firstName()));
+                    ownerService.create(new Owner(chatId, chat.firstName(), new ArrayList<>()));
                 }
 
-                Pattern pattern = Pattern.compile("(\\d+)");
+                Pattern pattern = Pattern.compile("(\\+7\\d+)");
                 Matcher matcher = pattern.matcher(text);
                 if (matcher.find()) {
                     getContact(chatId, text);
                     return;
+                }
+
+                Pattern pattern2 = Pattern.compile("(ID:)\\s(\\d+)");
+                Matcher matcher2 = pattern2.matcher(text);
+                if(matcher2.find()){
+                    Long animalId = parseLong(matcher2.group(2));
+                    setOwner(animalId, chatId);
+                    sendMessage(chatId, "Поздравляем! Вы стали временным владельцем животного! Не забывайте о ежедневных отчетах!");
+                }
+
+                Pattern pattern1 = Pattern.compile("(Номер отчета:)\\s(\\d+)");
+                Matcher matcher1 = pattern1.matcher(text);
+                if (matcher1.find()) {
+                    Long reportId = parseLong(matcher1.group(2));
+                    Long trialPeriodId = reportService.getById(reportId).getTrialPeriodId();
+                    AnimalType animalType = trialPeriodService.findById(trialPeriodId).getAnimalType();
+
+                    switch (animalType){
+                        case CAT -> sendPhotoFromReportToVolunteer(reportId, Constants.VOLUNTEER_CAT_SHELTER);
+
+                        case DOG -> sendPhotoFromReportToVolunteer(reportId, Constants.VOLUNTEER_DOG_SHELTER);
+                    }
                 }
 
                 if (message.chat().id() != null) {
@@ -114,9 +139,28 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                         case Keyboard.MAIN_MENU -> {
-                            owner.setOwnerType(null);
-                            ownerService.update(owner);
-                            replyMarkup.sendMessageStart(chatId);
+                            if(owner.getAnimals().isEmpty()) {
+                                owner.setOwnerType(null);
+                                ownerService.update(owner);
+                                replyMarkup.sendMessageStart(chatId);
+                            } else {
+                                switch (type) {
+                                    case CAT -> {
+                                        sendMenuStage(AnimalType.CAT, chatId);
+                                        sendMessage(chatId, """
+                                                На данный момент вы уже являетесь клиентом приюта для котов и не можете выйти в главное меню.
+                                                Если есть вопросы, обратитесь к волонтёру.
+                                                """);
+                                    }
+                                    case DOG -> {
+                                        sendMenuStage(AnimalType.DOG, chatId);
+                                        sendMessage(chatId, """
+                                                На данный момент вы уже являетесь клиентом приюта для собак и не можете выйти в главное меню.
+                                                Если есть вопросы, обратитесь к волонтёру.
+                                                """);
+                                    }
+                                }
+                            }
                         }
                         case Keyboard.CONTACT_DETAILS_OF_THE_GUARD -> {
                             if (owner.getOwnerType().equals(AnimalType.DOG)){
@@ -127,10 +171,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                         case Keyboard.CONTACT_DETAILS -> {
-                            sendMessage(chatId, "Пожалуйста, введите свой номер телефона в формате 89171234123");
+                            sendMessage(chatId, "Пожалуйста, введите свой номер телефона в формате +79171234123");
                         }
                         case Keyboard.ABOUT_THE_SHELTER -> {
-                            AnimalType type = owner.getOwnerType();
                             if(type.equals(AnimalType.DOG)){
                                 sendMessage(chatId, Constants.DOG_SHELTER_INFO);
                             }
@@ -177,13 +220,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(chatId,getStringFromList(dogList));
                         }
                         case Keyboard.CALL_A_VOLUNTEER -> {
-                            AnimalType type = owner.getOwnerType();
                             logger.info("Позвали волонтёра - ID: {}", chatId);
                             sendMessage(chatId, "Мы направили ваш запрос волонтеру, скоро он с вами свяжется!");
 
+
                             switch (type) {
-                                case CAT -> sendMessage(Constants.VOLUNTEER_1_ID, "Напиши этому человеку: @" + username);
-                                case DOG -> sendMessage(Constants.VOLUNTEER_2_ID, "Напиши этому человеку: @" + username);
+                                case CAT -> sendMessage(Constants.VOLUNTEER_CAT_SHELTER, "Напиши этому человеку: @" + username);
+                                case DOG -> sendMessage(Constants.VOLUNTEER_DOG_SHELTER, "Напиши этому человеку: @" + username);
                                 default -> sendMessage(chatId, "К сожалению, мы не можем с вами связаться, напишите волонтеру самостоятельно. Спасибо! "
                                             + Constants.VOLUNTEER_INVITE);
                             }
@@ -245,9 +288,27 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             logger.info("Советы кинолога - ID:{}", chatId);
                             sendMessage(chatId, Constants.DOG_HANDLERS_ADVICE);
                         }
-                        case Keyboard.PROVEN_CYNOLOGISTS -> {
+                        case Keyboard.PROVEN_DOG_HANDLERS -> {
                             logger.info("Проверенные кинологи для обращения - ID:{}", chatId);
                             sendMessage(chatId, Constants.DOG_HANDLERS_CONTACTS);
+                        }
+                        case Keyboard.SEND_REPORT_TO_VOLUNTEER -> {
+                            if (!Objects.equals(chatId, Constants.VOLUNTEER_DOG_SHELTER) || !chatId.equals(Constants.VOLUNTEER_CAT_SHELTER)){
+                                logger.info("Запрос на получение фотоотчёта сторонним пользователем- ID:{}", chatId);
+                                sendMessage(chatId, "Здравствуйте! Данный функционал бота доступен только для волонтеров!");
+                            }
+                            else {
+                                logger.info("Запрос на получение фотоотчёта - ID:{}", chatId);
+                                sendMessage(chatId, "Введи номер отчета (только цифры, без дополнительных символов)");
+                            }
+                        }
+                        case Keyboard.TB_GUIDELINES -> {
+                            logger.info("Рекомендации по ТБ - ID:{}", chatId);
+                            sendMessage(chatId, Constants.TB_GUIDELINES);
+                        }
+                        case Keyboard.GET_ANIMAL -> {
+                            logger.info("Забирают животное - ID:{}", chatId);
+                            sendMessage(chatId, "Введите номер животного в формате ID: 1");
                         }
                     }
                 }
@@ -287,7 +348,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private void getContact(Long chatId, String text) {
-        Pattern pattern = Pattern.compile("^(\\d{11})$");
+        Pattern pattern = Pattern.compile("^(\\+\\d{11})$");
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             Owner byId = ownerService.getByChatId(chatId);
@@ -295,23 +356,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             ownerService.update(byId);
             sendMessage(chatId, "Телефон принят");
         } else {
-            sendMessage(chatId, "Неверно ввел");
+            sendMessage(chatId, "Пожалуйста, введите с +7");
         }
         logger.info("Прилетел телефон - ID:{} тел:{} ", chatId, text);
     }
 
-    private void sendPhoto(Long chatId) {
-        Owner owner = ownerRepository.getOwnerByChatId(chatId);
-        GetFile getFile = new GetFile(reportService.getById(chatId).getPhotoId());
+    private void sendPhotoFromReportToVolunteer(Long reportId, Long volunteerChatId) {
+        GetFile getFile = new GetFile(reportService.getById(reportId).getPhotoId());
         GetFileResponse getFileResponse = telegramBot.execute(getFile);
-        TrialPeriod trialPeriod = trialPeriodService.findById(reportService.getById(chatId).getTrialPeriodId());
+        Report report = reportService.getById(reportId);
+        TrialPeriod trialPeriod = trialPeriodService.findById(report.getTrialPeriodId());
         if (getFileResponse.isOk()) {
             try {
                 byte[] image = telegramBot.getFileContent(getFileResponse.file());
-                SendPhoto sendPhoto = new SendPhoto(chatId, image);
+                SendPhoto sendPhoto = new SendPhoto(volunteerChatId, image);
                 sendPhoto.caption("Id владельца: " + trialPeriod.getOwnerId() + "\n" +
                         "Id испытательного срока: " + trialPeriod.getId() + "\n" +
-                        "Id отчёта:" + chatId);
+                        "Id отчёта:" + reportId + "\n" +
+                        "Рацион питания: " + report.getFoodRation() + "\n" +
+                        "Изменение поведения: " + report.getBehaviorChange() + "\n" +
+                        "Состояние здоровья: " + report.getStateOfHealth());
                 telegramBot.execute(sendPhoto);
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
@@ -334,7 +398,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             sendPhoto.caption("""
                     Рацион питания: ваш текст;
                     Общее самочувствие: ваш текст;
-                    Изменение поведения: ваш текст;
+                    Изменение поведения: ваш текст
                     """);
             telegramBot.execute(sendPhoto);
         } catch (IOException | URISyntaxException e) {
@@ -348,5 +412,61 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 .append("\n")
                 .append("============").append("\n"));
         return sb.toString();
+    }
+    private void setOwner(Long animalId, Long chatId){
+        Owner owner = ownerService.getByChatId(chatId);
+        animalService.setOwner(animalId, owner);
+    }
+
+    @Scheduled(cron = "@daily")
+    private void sendNotification() {
+        for (Owner owner : ownerService.getAll()) {
+            for (TrialPeriod trialPeriod : trialPeriodService.findAllByOwnerId(owner.getId())) {
+                if ((trialPeriod.getReports().size() < 60 && !trialPeriod.getLastDateOfReport().isEqual(trialPeriod.getDateOfTheEnd())) &&
+                        trialPeriod.getLastDateOfReport().isBefore(LocalDate.now().minusDays(2))) {
+                    sendMessage(owner.getChatId(), "Вы не отправляли отчёты уже более двух дней. " +
+                            "Пожалуйста, отправьте отчёт или выйдите на связь с волонтёрами.");
+
+                    if (owner.getOwnerType().equals(AnimalType.CAT)) {
+                        sendMessage(Constants.VOLUNTEER_CAT_SHELTER, "Напиши этому человеку c ID = " + owner.getChatId()
+                                + ". Он не отправлял отчет о животном более двух дней");
+                    } else if (owner.getOwnerType().equals(AnimalType.DOG))
+                        sendMessage(Constants.VOLUNTEER_DOG_SHELTER, "Напиши этому человеку c ID = " + owner.getChatId()
+                                + ". Он не отправлял отчет о животном более двух дней");
+                }
+            }
+        }
+    }
+
+    @Scheduled(cron = "@daily")
+    private void sendTrialPeriodStatus() {
+        for (Owner owner : ownerService.getAll()) {
+            for (TrialPeriod trialPeriod : trialPeriodService.findAllByOwnerId(owner.getId())) {
+                if (trialPeriod.getPeriodType().equals(TrialPeriodType.FAILED)) {
+                    sendMessage(owner.getChatId(),
+                            """ 
+                            Здравстуйте!
+                            К сожалению, вы не выполнили обязательное условие по уходу за животным и мы вынуждены забрать животное обратно в приют.
+                            Пожалуйста, свяжитесь с волонтёром, если вам нужна будет помощь!
+                            """);
+
+                } else if (trialPeriod.getPeriodType().equals(TrialPeriodType.EXTENDED)) {
+                    sendMessage(owner.getChatId(),
+                            """
+                            Вам продлили испытательный срок.
+                            Для подробной информации, пожалуйста, свяжитесь с волонтёром.
+                            """);
+                } else if (trialPeriod.getPeriodType().equals(TrialPeriodType.FINISHED)) {
+                    sendMessage(owner.getChatId(),
+                            """
+                            Поздравляем!
+                            Вы прошли испытательный срок!
+                            Теперь вы - настоящий родитель своего любимого питомца!
+                            Будьте счастливы!
+                            Если остались вопросы, вы всегда можете обратиться к нашим волонтёрам!
+                            """);
+                }
+            }
+        }
     }
 }
