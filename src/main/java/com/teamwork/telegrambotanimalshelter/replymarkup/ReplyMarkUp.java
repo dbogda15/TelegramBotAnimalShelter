@@ -7,7 +7,6 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.teamwork.telegrambotanimalshelter.constant.Constants;
 import com.teamwork.telegrambotanimalshelter.constant.Keyboard;
-import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -25,7 +24,9 @@ public class ReplyMarkUp {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
                 new KeyboardButton(Keyboard.INFORMATION_ABOUT_SHELTER),
                 new KeyboardButton(Keyboard.SEND_REPORT_FORM));
-        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.CALL_A_VOLUNTEER));
+        replyKeyboardMarkup.addRow(
+                new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
+                new KeyboardButton(Keyboard.SEND_REPORT_TO_VOLUNTEER));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.MAIN_MENU));
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Выберите приют:");
     }
@@ -39,8 +40,10 @@ public class ReplyMarkUp {
                 new KeyboardButton(Keyboard.TB_GUIDELINES),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS_OF_THE_GUARD));
-        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.FAQ));
-        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.CALL_A_VOLUNTEER));
+        replyKeyboardMarkup.addRow(
+                new KeyboardButton(Keyboard.FAQ),
+                new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
+                new KeyboardButton(Keyboard.GET_ANIMAL));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.MAIN_MENU));
 
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Информация о кошачьем приюте");
@@ -55,8 +58,10 @@ public class ReplyMarkUp {
                 new KeyboardButton(Keyboard.TB_GUIDELINES),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS_OF_THE_GUARD));
-        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.FAQ));
-        replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.CALL_A_VOLUNTEER));
+        replyKeyboardMarkup.addRow(
+                new KeyboardButton(Keyboard.FAQ),
+                new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
+                new KeyboardButton(Keyboard.GET_ANIMAL));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.MAIN_MENU));
 
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Информация о собачьем приюте");
@@ -69,10 +74,10 @@ public class ReplyMarkUp {
         );
         replyKeyboardMarkup.addRow(
                 new KeyboardButton(Keyboard.RECOMMENDATIONS_FOR_CATS),
-                new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS)
         );
         replyKeyboardMarkup.addRow(
+                new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
                 new KeyboardButton(Keyboard.MAIN_MENU)
         );
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Все о кошках");
@@ -85,10 +90,10 @@ public class ReplyMarkUp {
         );
         replyKeyboardMarkup.addRow(
                 new KeyboardButton(Keyboard.RECOMMENDATIONS_FOR_DOGS),
-                new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
                 new KeyboardButton(Keyboard.CONTACT_DETAILS)
         );
         replyKeyboardMarkup.addRow(
+                new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
                 new KeyboardButton(Keyboard.MAIN_MENU)
         );
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Все о собаках");
@@ -106,7 +111,7 @@ public class ReplyMarkUp {
         );
         replyKeyboardMarkup.addRow(
                 new KeyboardButton(Keyboard.DOG_HANDLERS_ADVICE),
-                new KeyboardButton(Keyboard.PROVEN_CYNOLOGISTS));
+                new KeyboardButton(Keyboard.PROVEN_DOG_HANDLERS));
         replyKeyboardMarkup.addRow(
                 new KeyboardButton(Keyboard.BACK_TO_ALL_ABOUT_DOGS)
         );

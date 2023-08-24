@@ -1,25 +1,30 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
 import com.teamwork.telegrambotanimalshelter.exceptions.IncorrectArgumentException;
+import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
+import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
-import com.teamwork.telegrambotanimalshelter.repository.ShelterRepository;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
 import com.teamwork.telegrambotanimalshelter.service.ShelterService;
+import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDate;
 import java.util.*;
 @Service
 public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository animalRepository;
     private final ShelterService shelterService;
-    public AnimalServiceImpl(AnimalRepository animalRepository, ShelterService shelterService) {
+    private final TrialPeriodService trialPeriodService;
+    public AnimalServiceImpl(AnimalRepository animalRepository, ShelterService shelterService, TrialPeriodService trialPeriodService) {
         this.animalRepository = animalRepository;
         this.shelterService = shelterService;
+        this.trialPeriodService = trialPeriodService;
     }
 
     @Override
@@ -55,7 +60,13 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     public Animal setOwner(Long id, Owner owner) {
         Animal existAnimal = getById(id);
+        if (existAnimal.getOwner() != null) {
+            throw new IncorrectArgumentException("У этого животного есть хозяин!");
+        }
         existAnimal.setOwner(owner);
+        owner.setOwnerType(existAnimal.getAnimalType());
+        trialPeriodService.create(new TrialPeriod(LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),
+                owner.getId(), id, existAnimal.getAnimalType(), new ArrayList<>(), TrialPeriodType.IN_PROGRESS));
         return animalRepository.save(existAnimal);
     }
 

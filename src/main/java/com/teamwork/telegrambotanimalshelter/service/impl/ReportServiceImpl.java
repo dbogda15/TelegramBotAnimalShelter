@@ -51,7 +51,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         List<String> messagesParts = split(message);
-        Report report = create(new Report(photoId, messagesParts.get(0), messagesParts.get(1),
+        create(new Report(photoId, messagesParts.get(0), messagesParts.get(1),
                 messagesParts.get(2), LocalDate.now(), trialPeriod.getId()));
         trialPeriod.setLastDateOfReport(LocalDate.now());
         trialPeriodService.update(trialPeriod);
@@ -103,7 +103,7 @@ public class ReportServiceImpl implements ReportService {
        return reportRepository.save(report);
     }
     private List<String> split(String message) {
-        Pattern pattern = Pattern.compile("(Рацион питания:)\\s(\\W+);\\n(Общее самочувствие:)\\s(\\W+);\\n(Изменение поведения:)\\s(\\W+);");
+        Pattern pattern = Pattern.compile("(Рацион питания:)\\s(\\W+);\\n(Общее самочувствие:)\\s(\\W+);\\n(Изменение поведения:)\\s(\\W+)");
         if (message == null || message.isBlank() || !message.contains("Рацион питания:")
                 || !message.contains("Общее самочувствие:") || !message.contains("Изменение поведения:")) {
             throw new IncorrectArgumentException("Описание не должно быть пустым и должно быть написано по шаблону с ключевыми словами!");

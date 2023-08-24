@@ -1,6 +1,7 @@
 package com.teamwork.telegrambotanimalshelter.service;
 
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
+import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 
 import java.util.List;
 
