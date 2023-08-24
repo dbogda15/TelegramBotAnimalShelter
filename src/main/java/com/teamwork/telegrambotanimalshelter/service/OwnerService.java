@@ -10,12 +10,12 @@ import java.util.List;
 public interface OwnerService {
     /**
      * Создание и добавдение в БД нового владельца
-     * @param owner
+     * @param ownerId
      * @param animalId
      * @return Owner
      * @throws IncorrectArgumentException
      */
-    Owner create(Owner owner, Long animalId) throws IncorrectArgumentException;
+    Owner create(Long ownerId, Long animalId) throws IncorrectArgumentException;
 
     Owner create(Owner owner);
     Owner getByChatId(Long chatId);

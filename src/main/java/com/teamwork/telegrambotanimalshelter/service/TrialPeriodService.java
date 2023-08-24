@@ -21,12 +21,6 @@ public interface TrialPeriodService {
     TrialPeriod findById(Long id);
 
     /**
-     * Удаление испытательного срока из БД
-     * @param trialPeriod
-     */
-    void delete(TrialPeriod trialPeriod);
-
-    /**
      * Получение всех испытательных сроков
      * @return
      */
@@ -43,7 +37,7 @@ public interface TrialPeriodService {
      * Удаление испытательного срока по ID
      * @param id
      */
-    void delete(Long id);
+    String deleteById(Long id);
 
     /**
      * Обновление данных по испытательному сроку

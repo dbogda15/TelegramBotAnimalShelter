@@ -31,11 +31,14 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public Owner create(Owner owner, Long animalId) {
+    public Owner create(Long  ownerId, Long animalId) {
         if (animalService.getById(animalId).getOwner() != null) {
             throw new IncorrectArgumentException("У этого животного есть хозяин!");
         }
+        trialPeriodService.create(new TrialPeriod(LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),
+                        ownerId, animalId, animalService.getById(animalId).getAnimalType(), new ArrayList<>(), TrialPeriodType.IN_PROGRESS));
         AnimalType animalType = animalService.getById(animalId).getAnimalType();
+        Owner owner =getById(ownerId);
         owner.setOwnerType(animalType);
         animalService.getById(animalId).setOwner(owner);
         trialPeriodService.create(new TrialPeriod(LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),

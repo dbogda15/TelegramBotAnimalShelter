@@ -31,10 +31,6 @@ public class TrialPeriodServiceImpl implements TrialPeriodService {
         return trialPeriod.get();
     }
 
-    @Override
-    public void delete(TrialPeriod trialPeriod) {
-        trialPeriodRepository.delete(findById(trialPeriod.getId()));
-    }
 
     @Override
     public List<TrialPeriod> findAll() {
@@ -55,8 +51,15 @@ public class TrialPeriodServiceImpl implements TrialPeriodService {
     }
 
     @Override
-    public void delete(Long id) {
-        trialPeriodRepository.deleteById(id);
+    public String deleteById(Long id) {
+        Optional<TrialPeriod> trialPeriod = trialPeriodRepository.findById(id);
+        String message;
+        if(trialPeriod.isPresent()){
+            trialPeriodRepository.delete(trialPeriod.get());
+            message = "Испытательный срок удалён!";
+        }
+        else throw new NotFoundException("Испытательного срока с таким ID не существует!");
+        return message;
     }
 
     @Override

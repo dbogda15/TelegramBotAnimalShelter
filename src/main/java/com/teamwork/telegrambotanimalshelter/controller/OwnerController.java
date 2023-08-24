@@ -16,6 +16,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/owners")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Запрос выполнен успешно"),
+        @ApiResponse(responseCode = "400", description = "Ошибка в параметрах запроса"),
+        @ApiResponse(responseCode = "404", description = "Несуществующий URL"),
+        @ApiResponse(responseCode = "500", description = "Ошибка со стороны сервера")
+})
 public class OwnerController {
     private final OwnerService ownerService;
     private final AnimalService animalService;
@@ -26,20 +32,17 @@ public class OwnerController {
     }
 
     @PostMapping
-    @Operation(summary = "Создание владельца")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Запрос выполнен успешно"),
-            @ApiResponse(responseCode = "400", description = "Ошибка в параметрах запроса"),
-            @ApiResponse(responseCode = "404", description = "Несуществующий URL"),
-            @ApiResponse(responseCode = "500", description = "Ошибка со стороны сервера")
-    })
+    @Operation(summary = "Создание нового пользователя без привязки к животному")
     public Owner create(@RequestParam String name,
-                       @RequestParam @Parameter(description = "89171230011") String phone,
+                        @RequestParam @Parameter(description = "89171230011") String phone) throws IncorrectArgumentException {
+        return ownerService.create(new Owner(name, phone));
+    }
+
+    @PostMapping("/animal_owner")
+    @Operation(summary = "Создание владельца с привязкой к животному")
+    public Owner create(@RequestParam Long ownerId,
                        @RequestParam Long animalId) throws IncorrectArgumentException {
-        Animal animal = animalService.getById(animalId);
-        Owner owner = ownerService.create(new Owner(name, phone), animalId);
-        animal.setOwner(owner);
-        return owner;
+        return ownerService.create(ownerId, animalId);
     }
 
     @GetMapping("/animal")
@@ -69,15 +72,25 @@ public class OwnerController {
     @PutMapping
     @Operation(summary = "Обновить информацию о владельце")
     public ResponseEntity<Owner> update (@RequestParam Long id,
-                                         @RequestParam String name,
-                                         @RequestParam @Parameter(description = "89171230011") String phone,
-                                         @RequestParam Long animal_id) {
+                                         @RequestParam (required = false) Long chatId,
+                                         @RequestParam (required = false) String name,
+                                         @RequestParam (required = false) @Parameter(description = "89171230011") String phone,
+                                         @RequestParam (required = false) Long animal_id) {
         Owner owner = ownerService.getById(id);
-        owner.setName(name);
-        owner.setPhone(phone);
-        List<Animal> animals = owner.getAnimals();
-        animals.add(animalService.getById(animal_id));
-        owner.setAnimals(animals);
+        if (chatId != null){
+            owner.setChatId(chatId);
+        }
+        if (name != null) {
+            owner.setName(name);
+        }
+        if (phone != null) {
+            owner.setPhone(phone);
+        }
+        if (animal_id != null) {
+            List<Animal> animals = owner.getAnimals();
+            animals.add(animalService.getById(animal_id));
+            owner.setAnimals(animals);
+        }
         ownerService.update(owner);
         return ResponseEntity.ok(owner);
     }

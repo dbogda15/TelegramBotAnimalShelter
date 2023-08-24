@@ -1,11 +1,14 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
 import com.teamwork.telegrambotanimalshelter.exceptions.IncorrectArgumentException;
+import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
+import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.repository.OwnerRepository;
 import com.teamwork.telegrambotanimalshelter.service.AnimalService;
+import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
 import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +34,9 @@ class OwnerServiceImplTest {
     @Mock
     AnimalService animalService;
 
+    @Mock
+    TrialPeriodService trialPeriodService;
+
     @InjectMocks
     OwnerServiceImpl out;
 
@@ -44,10 +51,12 @@ class OwnerServiceImplTest {
     static final Owner OWNER_WITHOUT_CAT = new Owner(CAT_OWNER_ID, CAT_OWNER_CHAT_ID, "Name", "89177534345");
     static final Owner CAT_OWNER = new Owner(CAT_OWNER_ID, CAT_OWNER_CHAT_ID, "Name", "89177534345", AnimalType.CAT, List.of(CAT), new ArrayList<>());
     static final Animal BUSY_CAT = new Animal(3L, AnimalType.CAT,"Barsik", 5, CORRECT_OWNER);
+    static final TrialPeriod TRIAL_PERIOD = new TrialPeriod(LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),
+            CAT_OWNER_ID, ANIMAL_ID, AnimalType.CAT, new ArrayList<>(), TrialPeriodType.IN_PROGRESS);
 
     @Test
     @DisplayName("Создание нового владельца")
-    void shouldReturnCorrectOwnerWhenCreate(){
+    void shouldReturnCorrectOwnerWithoutANimalWhenCreate(){
         when(ownerRepository.save(NEW_OWNER))
                 .thenReturn(NEW_OWNER);
 
@@ -56,23 +65,21 @@ class OwnerServiceImplTest {
         verify(ownerRepository, times(1)).save(NEW_OWNER);
     }
 
-
     @Test
-    @DisplayName("Назначение животного владельцу")
-    void shouldReturnCorrectOwnerWhenAddAnimal(){
+    @DisplayName("Создание владельца с животным")
+    void shouldReturnCorrectOwnerWithAnimalWhenCreate(){
         when(animalService.getById(ANIMAL_ID))
                 .thenReturn(CAT);
-
-        when(out.create(OWNER_WITHOUT_CAT, CAT.getId()))
+        when(ownerRepository.findById(CAT_OWNER_ID))
+                .thenReturn(Optional.of(OWNER_WITHOUT_CAT));
+        when(trialPeriodService.create(TRIAL_PERIOD))
+                .thenReturn(TRIAL_PERIOD);
+        when(ownerRepository.save(OWNER_WITHOUT_CAT))
                 .thenReturn(CAT_OWNER);
 
-        assertEquals(CAT_OWNER, ownerRepository.save(OWNER_WITHOUT_CAT));
-
-        verify(animalService, times(3)).getById(CAT.getId());
-
-        verify(ownerRepository, times(1)).save(OWNER_WITHOUT_CAT);
-
+        assertEquals(CAT_OWNER, out.create(CAT_OWNER_ID, ANIMAL_ID));
     }
+
 
     @Test
     @DisplayName("Поиск владельца по ID")
