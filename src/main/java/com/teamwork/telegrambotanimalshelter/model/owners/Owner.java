@@ -47,7 +47,7 @@ public class Owner {
      */
     @JsonIgnoreProperties(value = "owner", allowGetters = true)
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, mappedBy = "owner")
     private List<Animal> animals;
     /**
      * Список испытательных сроков
@@ -57,6 +57,11 @@ public class Owner {
     public Owner(String name, String phone) {
         this.name = name;
         this.phone = phone;
+    }
+    public Owner(Long chatId, String name, List<Animal> animals){
+        this.chatId = chatId;
+        this.name = name;
+        this.animals = animals;
     }
     public Owner(Long chatId, String name){
         this.chatId = chatId;

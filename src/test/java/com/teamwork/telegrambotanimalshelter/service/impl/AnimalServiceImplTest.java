@@ -1,11 +1,13 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
+import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import com.teamwork.telegrambotanimalshelter.service.ShelterService;
+import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,8 @@ class AnimalServiceImplTest {
     AnimalRepository animalRepository;
     @Mock
     ShelterService shelterService;
+    @Mock
+    TrialPeriodService trialPeriodService;
 
     @InjectMocks
     AnimalServiceImpl out;
@@ -173,11 +177,13 @@ class AnimalServiceImplTest {
     void shouldReturnCorrectAnimalWhenSetOwner(){
         when(animalRepository.findById(CORRECT_ID))
                 .thenReturn(Optional.of(ANIMAL_WITHOUT_OWNER));
-        when(out.setOwner(ANIMAL_WITHOUT_OWNER.getId(), CORRECT_OWNER))
-                .thenReturn(CORRECT_ANIMAL);
 
         Animal result = out.setOwner(ANIMAL_WITHOUT_OWNER.getId(), CORRECT_OWNER);
+
         assertEquals(CORRECT_ANIMAL, result);
+
+        when(trialPeriodService.create(any(TrialPeriod.class)))
+                .thenReturn(new TrialPeriod());
 
         verify(animalRepository, times(1)).save(CORRECT_ANIMAL);
     }

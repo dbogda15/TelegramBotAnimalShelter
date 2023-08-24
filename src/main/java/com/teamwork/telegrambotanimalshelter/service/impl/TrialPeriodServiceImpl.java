@@ -1,9 +1,7 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
 import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
-import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.repository.TrialPeriodRepository;
-import com.teamwork.telegrambotanimalshelter.service.AnimalService;
 import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;

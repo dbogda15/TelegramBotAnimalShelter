@@ -79,15 +79,14 @@ public class Animal {
     }
 
     public void setOwner(Owner owner) {
-        if(owner.getOwnerType().equals(this.getAnimalType())) {
+        if(owner.getOwnerType() == null || owner.getOwnerType().equals(this.getAnimalType())) {
             this.owner = owner;
         } else throw new IncorrectArgumentException("У одного владельца могут быть только однотипные животные");
     }
     @Override
     public String toString() {
-        return "id=" + id +
-                ", animalType=" + animalType +
-                ", name=" + name +
-                ", age=" + age;
+        return "Номер животного: " + id +
+                ". Имя: " + name +
+                ". Возраст: " + age;
     }
 }

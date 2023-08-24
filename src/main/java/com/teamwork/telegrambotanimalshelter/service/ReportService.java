@@ -1,8 +1,6 @@
 package com.teamwork.telegrambotanimalshelter.service;
 
 import com.teamwork.telegrambotanimalshelter.model.Report;
-import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
-import com.teamwork.telegrambotanimalshelter.model.Report;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,12 +15,12 @@ public interface ReportService {
 
     /**
      * Создание отчета через сообщение из Телеграм
+     *
      * @param photoId
      * @param message
      * @param id
-     * @return
      */
-    Report createFromTelegram(String photoId, String message, Long id);
+    void createFromTelegram(String photoId, String message, Long id);
     /**
      * Получение отчёта по его ID
      * @param id

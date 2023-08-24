@@ -41,6 +41,8 @@ public class OwnerServiceImpl implements OwnerService {
         Owner owner =getById(ownerId);
         owner.setOwnerType(animalType);
         animalService.getById(animalId).setOwner(owner);
+        trialPeriodService.create(new TrialPeriod(LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),
+                owner.getId(), animalId, animalType, new ArrayList<>(), TrialPeriodType.IN_PROGRESS));
         return ownerRepository.save(owner);
     }
 
