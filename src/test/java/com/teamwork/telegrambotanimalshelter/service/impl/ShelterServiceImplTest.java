@@ -134,5 +134,15 @@ class ShelterServiceImplTest {
 
         verify(animalRepository, times(1)).getAnimalsByShelterId(CORRECT_ID);
     }
+    @Test
+    @DisplayName("Получение приюта по типу питомца")
+    void shouldReturnCorrectShelterIfTypeIsCorrect() {
+        when(shelterRepository.getShelterByShelterType(CORRECT_TYPE)).
+                thenReturn(CORRECT_SHELTER);
+        assertEquals(CORRECT_SHELTER, out.getByShelterType(CORRECT_TYPE));
+
+        verify(shelterRepository, times(1)).getShelterByShelterType(CORRECT_TYPE);
+    }
+
 
 }
