@@ -6,7 +6,6 @@ import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
 import com.teamwork.telegrambotanimalshelter.model.shelters.Shelter;
 import com.teamwork.telegrambotanimalshelter.repository.AnimalRepository;
 import com.teamwork.telegrambotanimalshelter.service.ShelterService;
-import com.teamwork.telegrambotanimalshelter.service.TrialPeriodService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,9 +28,6 @@ class AnimalServiceImplTest {
     AnimalRepository animalRepository;
     @Mock
     ShelterService shelterService;
-    @Mock
-    TrialPeriodService trialPeriodService;
-
     @InjectMocks
     AnimalServiceImpl out;
     public static final Long CORRECT_ID = 1L;
@@ -47,7 +43,6 @@ class AnimalServiceImplTest {
     public static final AnimalType OWNER_TYPE = CORRECT_TYPE;
     public static final Owner CORRECT_OWNER = new Owner(CORRECT_OWNER_ID, CHAT_ID, CORRECT_OWNER_NAME, CORRECT_OWNER_PHONE, OWNER_TYPE, new ArrayList<>(), new ArrayList<>());
     public static final Animal CORRECT_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER, SHELTER_ID);
-    public static final Animal ANIMAL_WITHOUT_OWNER = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, SHELTER_ID);
     public static final Animal ANIMAL_WITHOUT_SHELTER = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER);
     public static final Shelter SHELTER = new Shelter(SHELTER_ID, "X", "X", "X", "X", "X", "X", AnimalType.CAT, new ArrayList<>());
     public static final Animal FREE_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, null, null);

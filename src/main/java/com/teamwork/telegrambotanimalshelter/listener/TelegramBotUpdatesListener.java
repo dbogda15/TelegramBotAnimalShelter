@@ -296,13 +296,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(chatId, Constants.DOG_HANDLERS_CONTACTS);
                         }
                         case Keyboard.SEND_REPORT_TO_VOLUNTEER -> {
-                            if (!Objects.equals(chatId, Constants.VOLUNTEER_DOG_SHELTER) || !chatId.equals(Constants.VOLUNTEER_CAT_SHELTER)){
-                                logger.info("Запрос на получение фотоотчёта сторонним пользователем- ID:{}", chatId);
-                                sendMessage(chatId, "Здравствуйте! Данный функционал бота доступен только для волонтеров!");
-                            }
-                            else {
+                            if (Objects.equals(chatId, Constants.VOLUNTEER_DOG_SHELTER) || Objects.equals(chatId, Constants.VOLUNTEER_CAT_SHELTER)){
                                 logger.info("Запрос на получение фотоотчёта - ID:{}", chatId);
                                 sendMessage(chatId, "Введи номер отчета (только цифры, без дополнительных символов)");
+                            }
+                            else {
+                                logger.info("Запрос на получение фотоотчёта сторонним пользователем- ID:{}", chatId);
+                                sendMessage(chatId, "Здравствуйте! Данный функционал бота доступен только для волонтеров!");
                             }
                         }
                         case Keyboard.TB_GUIDELINES -> {
@@ -359,7 +359,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             ownerService.update(byId);
             sendMessage(chatId, "Телефон принят");
         } else {
-            sendMessage(chatId, "Пожалуйста, введите с +7");
+            sendMessage(chatId, "Пожалуйста, введите корректный номер!");
         }
         logger.info("Прилетел телефон - ID:{} тел:{} ", chatId, text);
     }
@@ -429,7 +429,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         trialPeriod.getLastDateOfReport().isBefore(LocalDate.now().minusDays(2))) {
                     sendMessage(owner.getChatId(), "Вы не отправляли отчёты уже более двух дней. " +
                             "Пожалуйста, отправьте отчёт или выйдите на связь с волонтёрами.");
-
                     if (owner.getOwnerType().equals(AnimalType.CAT)) {
                         sendMessage(Constants.VOLUNTEER_CAT_SHELTER, "Напиши этому человеку c ID = " + owner.getChatId()
                                 + ". Он не отправлял отчет о животном более двух дней");

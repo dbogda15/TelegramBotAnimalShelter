@@ -49,13 +49,9 @@ class ShelterServiceImplTest {
     private static final AnimalType SHELTER_TYPE = AnimalType.CAT;
     private static final List<Animal> ANIMAL_LIST = new ArrayList<>();
     public static final Owner CORRECT_OWNER = new Owner(CORRECT_OWNER_ID, CHAT_ID, CORRECT_OWNER_NAME, CORRECT_OWNER_PHONE, OWNER_TYPE, new ArrayList<>(), new ArrayList<>());
-
     private static final Shelter CORRECT_SHELTER = new Shelter(CORRECT_ID, NAME, LOCATION, TIMETABLE, ABOUT_ME, SECURITY,
             SAFETY_ADVICE, SHELTER_TYPE, ANIMAL_LIST);
-    private static final Shelter UPDATE_SHELTER = new Shelter(UPDATE_NAME, LOCATION, TIMETABLE, ABOUT_ME, SECURITY,
-            SAFETY_ADVICE, SHELTER_TYPE, ANIMAL_LIST);
     public static final Animal CORRECT_ANIMAL = new Animal(CORRECT_ID, CORRECT_TYPE, CORRECT_NAME, CORRECT_AGE, CORRECT_OWNER, SHELTER_ID);
-
 
     @Test
     @DisplayName("Создание приюта")

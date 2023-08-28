@@ -43,11 +43,8 @@ class ReportServiceImplTest {
     private static final Long TRIAL_PERIOD_ID = 1L;
     private static final LocalDate LOCAL_DATE = LocalDate.now();
     private static final Long CORRECT_ID = 1L;
-
     private static final Report CREATED_REPORT = new Report(PHOTO_ID, FOOD_RATION, STATE_OF_HEALTH, BEHAVIOR_CHANGE,
             LOCAL_DATE, TRIAL_PERIOD_ID);
-
-
     private static final LocalDate DATE_OD_THE_START = LocalDate.now();
     private static final LocalDate DATE_OF_THE_END = LocalDate.now();
     private static final LocalDate LAST_DATE_OF_PERIOD = LocalDate.now();
@@ -58,7 +55,6 @@ class ReportServiceImplTest {
     private static final TrialPeriodType PERIOD_TYPE = IN_PROGRESS;
     private static final TrialPeriod TRIAL_PERIOD = new TrialPeriod(DATE_OD_THE_START, DATE_OF_THE_END,
             LAST_DATE_OF_PERIOD, OWNER_ID, ANIMAL_ID, ANIMAL_TYPE, REPORTS, PERIOD_TYPE);
-
 
     @Test
     @DisplayName("Создание отчета")

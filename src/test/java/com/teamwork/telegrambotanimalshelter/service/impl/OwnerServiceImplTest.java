@@ -48,7 +48,6 @@ class OwnerServiceImplTest {
     static final Animal CAT =  new Animal(ANIMAL_ID, AnimalType.CAT, "Cat", 5);
     static final Owner OWNER_WITHOUT_CAT = new Owner(CAT_OWNER_ID, CAT_OWNER_CHAT_ID, "Name", "89177534345");
     static final Owner CAT_OWNER = new Owner(CAT_OWNER_ID, CAT_OWNER_CHAT_ID, "Name", "89177534345", AnimalType.CAT, List.of(CAT), new ArrayList<>());
-    static final Animal BUSY_CAT = new Animal(3L, AnimalType.CAT,"Barsik", 5, CORRECT_OWNER);
     static final TrialPeriod TRIAL_PERIOD = new TrialPeriod(LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),
             CAT_OWNER_ID, ANIMAL_ID, AnimalType.CAT, new ArrayList<>(), TrialPeriodType.IN_PROGRESS);
 

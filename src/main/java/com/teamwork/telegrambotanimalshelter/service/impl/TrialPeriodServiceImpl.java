@@ -52,14 +52,10 @@ public class TrialPeriodServiceImpl implements TrialPeriodService {
 
     @Override
     public String deleteById(Long id) {
-        Optional<TrialPeriod> trialPeriod = trialPeriodRepository.findById(id);
-        String message;
-        if(trialPeriod.isPresent()){
-            trialPeriodRepository.delete(trialPeriod.get());
-            message = "Испытательный срок удалён!";
-        }
-        else throw new NotFoundException("Испытательного срока с таким ID не существует!");
-        return message;
+        return trialPeriodRepository.findById(id).map(trialPeriod -> {
+            trialPeriodRepository.delete(trialPeriod);
+            return "Испытательный срок удалён!";
+        }).orElseThrow(() -> new NotFoundException("Испытательного срока с таким ID не существует!"));
     }
 
     @Override

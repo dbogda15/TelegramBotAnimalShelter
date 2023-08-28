@@ -36,14 +36,10 @@ private final AnimalRepository animalRepository;
 
     @Override
     public String delete(Long id) {
-        String message;
-        Optional<Shelter> shelter = shelterRepository.findById(id);
-        if (shelter.isPresent()){
-            shelterRepository.delete(shelter.get());
-            message = "Приют удалён";
-        }
-        else throw new NotFoundException("Приют с таким ID не существует");
-        return message;
+        return shelterRepository.findById(id).map(shelter -> {
+            shelterRepository.delete(shelter);
+            return "Приют удалён";
+        }).orElseThrow(() -> new NotFoundException("Приют с таким ID не существует"));
     }
 
     @Override

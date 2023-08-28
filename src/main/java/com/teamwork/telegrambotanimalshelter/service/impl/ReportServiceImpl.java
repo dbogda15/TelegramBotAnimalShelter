@@ -95,14 +95,10 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public String deleteById(Long id) {
-        String message;
-        Optional<Report> report = reportRepository.findById(id);
-        if(report.isPresent()){
-            reportRepository.delete(report.get());
-            message = "отчет удалён!";
-        }
-        else throw new NotFoundException("Отчёт с таким ID не существует");
-        return message;
+        return reportRepository.findById(id).map(report -> {
+            reportRepository.delete(report);
+            return "отчет удалён!";
+        }).orElseThrow(() -> new NotFoundException("Отчёт с таким ID не существует"));
     }
 
     @Override

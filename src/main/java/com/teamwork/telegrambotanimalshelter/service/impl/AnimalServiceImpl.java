@@ -78,14 +78,10 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public String delete(Long id) {
-        String message;
-        Optional<Animal> animal = animalRepository.findById(id);
-        if(animal.isPresent()){
-            animalRepository.delete(animal.get());
-            message = "Животное удалено";
-        }
-        else throw new NotFoundException("Животное с таким ID не существует");
-        return message;
+        return animalRepository.findById(id).map(animal -> {
+            animalRepository.delete(animal);
+            return "Животное удалено";
+        }).orElseThrow(() -> new NotFoundException("Животное с таким ID не существует"));
     }
 
     @Override

@@ -73,14 +73,10 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override
     public String delete(Long id) {
-        String message;
-        Optional<Owner> owner = ownerRepository.findById(id);
-        if(owner.isPresent()){
-            ownerRepository.delete(owner.get());
-            message = "Владелец удален";
-        }
-        else throw new NotFoundException("Владельца с таким ID не существует!");
-        return message;
+        return ownerRepository.findById(id).map(owner -> {
+            ownerRepository.delete(owner);
+            return "Владелец удален";
+        }).orElseThrow(() -> new NotFoundException("Владельца с таким ID не существует!"));
     }
 
     @Override
