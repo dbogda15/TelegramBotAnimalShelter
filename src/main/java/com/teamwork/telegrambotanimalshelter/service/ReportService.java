@@ -52,7 +52,7 @@ public interface ReportService {
      * Удалить отчет из БД по его ID
      * @param reportId - уникальный ID из БД
      */
-    void deleteById(Long reportId);
+    String deleteById(Long reportId);
     /**
      * Обновить данные в существующем отчёте
      * @param report

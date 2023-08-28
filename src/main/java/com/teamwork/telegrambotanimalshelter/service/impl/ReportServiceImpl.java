@@ -94,15 +94,22 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        reportRepository.delete(getById(id));
+    public String deleteById(Long id) {
+        String message;
+        Optional<Report> report = reportRepository.findById(id);
+        if(report.isPresent()){
+            reportRepository.delete(report.get());
+            message = "отчет удалён!";
+        }
+        else throw new NotFoundException("Отчёт с таким ID не существует");
+        return message;
     }
 
     @Override
     public Report update(Report report) {
        return reportRepository.save(report);
     }
-    private List<String> split(String message) {
+    public List<String> split(String message) {
         Pattern pattern = Pattern.compile("(Рацион питания:)\\s(\\W+);\\n(Общее самочувствие:)\\s(\\W+);\\n(Изменение поведения:)\\s(\\W+)");
         if (message == null || message.isBlank() || !message.contains("Рацион питания:")
                 || !message.contains("Общее самочувствие:") || !message.contains("Изменение поведения:")) {

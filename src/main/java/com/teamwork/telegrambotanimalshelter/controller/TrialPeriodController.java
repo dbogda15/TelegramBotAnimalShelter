@@ -44,31 +44,31 @@ public class TrialPeriodController {
     }
 
     @DeleteMapping
-    @Operation(summary = "")
+    @Operation(summary = "Удаление испытательного срока по ID")
     void delete(@RequestParam Long id){
         trialPeriodService.deleteById(id);
     }
 
     @GetMapping("/id")
-    @Operation(summary = "")
+    @Operation(summary = "Получение испытательного срока по ID")
     TrialPeriod getById(@RequestParam Long id){
         return trialPeriodService.findById(id);
     }
 
     @GetMapping("/all")
-    @Operation(summary = "")
+    @Operation(summary = "Получение списка всех испытательных сроков")
     List<TrialPeriod> getAll(){
         return trialPeriodService.findAll();
     }
 
     @GetMapping("/owner_id")
-    @Operation(summary = "")
+    @Operation(summary = "Получение списка испытательных сроков по ID владельца")
     List<TrialPeriod> getAllByOwnerId(@RequestParam Long ownerId){
         return trialPeriodService.findAllByOwnerId(ownerId);
     }
 
     @PutMapping
-    @Operation(summary = "")
+    @Operation(summary = "Обновление испытательного срока по ID")
     TrialPeriod update(@RequestParam Long id,
                        @RequestParam (required = false) @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheStart,
                        @RequestParam (required = false) @Parameter(example = "DD.MM.YYYY") LocalDate dateOfTheEnd,

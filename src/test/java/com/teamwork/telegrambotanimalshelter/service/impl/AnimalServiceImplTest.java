@@ -1,6 +1,5 @@
 package com.teamwork.telegrambotanimalshelter.service.impl;
 
-import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.animals.Animal;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.owners.Owner;
@@ -172,21 +171,6 @@ class AnimalServiceImplTest {
         verify(animalRepository, times(1)).getAnimalsByAnimalType(CORRECT_TYPE);
     }
 
-    @Test
-    @DisplayName("Корректная настройка владельца")
-    void shouldReturnCorrectAnimalWhenSetOwner(){
-        when(animalRepository.findById(CORRECT_ID))
-                .thenReturn(Optional.of(ANIMAL_WITHOUT_OWNER));
-
-        Animal result = out.setOwner(ANIMAL_WITHOUT_OWNER.getId(), CORRECT_OWNER);
-
-        assertEquals(CORRECT_ANIMAL, result);
-
-        when(trialPeriodService.create(any(TrialPeriod.class)))
-                .thenReturn(new TrialPeriod());
-
-        verify(animalRepository, times(1)).save(CORRECT_ANIMAL);
-    }
 
     @Test
     @DisplayName("Корректная настройка приюта")

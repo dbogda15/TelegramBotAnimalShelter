@@ -36,7 +36,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,8 +67,6 @@ class TelegramBotUpdatesListenerTest {
     OwnerRepository ownerRepository;
     @Mock
     OwnerServiceImpl ownerService;
-    @Mock
-    AnimalServiceImpl animalService;
     @Mock
     ShelterServiceImpl shelterService;
     @Mock
@@ -250,13 +247,6 @@ class TelegramBotUpdatesListenerTest {
         var sentMessage = captor.getValue();
         assertEquals(sentMessage.getParameters().get("text"), "Введите номер животного в формате ID: 1");
     }
-    @Test
-    void getFreeDogList(){
-        getCommand(Keyboard.LIST_OF_DOGS);
-        var sentMessage = captor.getValue();
-        
-    }
-
     @Test
     void sendReportExampleTest(){
         getCommand(Keyboard.SEND_REPORT_FORM);

@@ -4,14 +4,12 @@ import com.teamwork.telegrambotanimalshelter.model.TrialPeriod;
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
 import com.teamwork.telegrambotanimalshelter.repository.TrialPeriodRepository;
-import com.teamwork.telegrambotanimalshelter.service.AnimalService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDate;

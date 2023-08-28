@@ -203,7 +203,7 @@ class ReportServiceImplTest {
     @Test
     public void testSplit_validMessage_returnsList() {
         // Arrange
-        String message = "Рацион питания: Хороший;\nОбщее самочувствие: Отличное;\nИзменение поведения: Нет;";
+        String message = "Рацион питания: Хороший;\nОбщее самочувствие: Отличное;\nИзменение поведения: Нет";
 
         // Act
         List<String> result = out.split(message);

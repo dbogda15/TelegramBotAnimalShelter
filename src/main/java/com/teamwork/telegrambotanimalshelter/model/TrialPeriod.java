@@ -2,7 +2,6 @@ package com.teamwork.telegrambotanimalshelter.model;
 
 import com.teamwork.telegrambotanimalshelter.model.enums.AnimalType;
 import com.teamwork.telegrambotanimalshelter.model.enums.TrialPeriodType;
-import com.teamwork.telegrambotanimalshelter.model.Report;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

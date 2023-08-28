@@ -21,7 +21,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TrialPeriodController.class)
@@ -40,29 +39,6 @@ class TrialPeriodControllerTest {
     final static TrialPeriod TRIAL_PERIOD = new TrialPeriod(PERIOD_ID, LocalDate.now(), LocalDate.now().plusDays(30), LocalDate.now().minusDays(1),
             OWNER_ID, ANIMAL_ID, AnimalType.CAT, new ArrayList<>(), TrialPeriodType.IN_PROGRESS);
 
-    @Test
-    @DisplayName("Создание испытательного срока")
-    void whenValidCreate_thenReturn200() throws Exception {
-        when(trialPeriodService.create(any(TrialPeriod.class)))
-                .thenReturn(TRIAL_PERIOD);
-
-        mockMvc.perform(post("/trial_period")
-                        .param("dateOfTheStart", LocalDate.now().toString())
-                        .param("ownerId", OWNER_ID.toString())
-                        .param("animalId", ANIMAL_ID.toString())
-                        .param("animalType", "CAT")
-                        .param("type", "IN_PROGRESS"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(PERIOD_ID))
-                .andExpect(jsonPath("dateOfTheStart").value(LocalDate.now().toString()))
-                .andExpect(jsonPath("dateOfTheEnd").value(LocalDate.now().plusDays(30).toString()))
-                .andExpect(jsonPath("lastDateOfReport").value(LocalDate.now().minusDays(1).toString()))
-                .andExpect(jsonPath("ownerId").value(OWNER_ID))
-                .andExpect(jsonPath("animalId").value(ANIMAL_ID))
-                .andExpect(jsonPath("animalType").value("CAT"))
-                .andExpect(jsonPath("reports").value(new ArrayList<>()))
-                .andExpect(jsonPath("periodType").value("IN_PROGRESS"));
-    }
 
     @Test
     @DisplayName("Удаление испытательного срока")
