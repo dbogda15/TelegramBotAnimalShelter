@@ -87,8 +87,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     return;
                 }
 
-                AnimalType type = owner.getOwnerType();
-
                 if(!ownerRepository.existsOwnerByChatId(chatId)){
                     ownerService.create(new Owner(chatId, chat.firstName(), new ArrayList<>()));
                 }
@@ -131,6 +129,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         case Keyboard.CAT_SHELTER -> sendMenuStage(AnimalType.CAT, chatId);
                         case Keyboard.DOG_SHELTER -> sendMenuStage(AnimalType.DOG, chatId);
                         case Keyboard.INFORMATION_ABOUT_SHELTER-> {
+                            AnimalType type = owner.getOwnerType();
                             if (type.equals(AnimalType.CAT)){
                                 replyMarkup.sendMenuCat(chatId);
                             }
@@ -144,6 +143,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                 ownerService.update(owner);
                                 replyMarkup.sendMessageStart(chatId);
                             } else {
+                                AnimalType type = owner.getOwnerType();
                                 switch (type) {
                                     case CAT -> {
                                         sendMenuStage(AnimalType.CAT, chatId);
@@ -174,6 +174,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(chatId, "Пожалуйста, введите свой номер телефона в формате +79171234123");
                         }
                         case Keyboard.ABOUT_THE_SHELTER -> {
+                            AnimalType type = owner.getOwnerType();
                             if(type.equals(AnimalType.DOG)){
                                 sendMessage(chatId, Constants.DOG_SHELTER_INFO);
                             }
@@ -182,6 +183,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                         case Keyboard.WORK_SCHEDULE -> {
+                            AnimalType type = owner.getOwnerType();
                             if (type.equals(AnimalType.DOG)){
                                 sendMessage(chatId, shelterService.getByShelterType(type).getTimetable());
                             }
@@ -190,6 +192,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                         case Keyboard.SEND_REPORT_FORM -> {
+                            AnimalType type = owner.getOwnerType();
                             logger.info("Отправили форму отчета - ID:{}", chatId);
                             sendReportExample(chatId, type);
                         }
@@ -222,8 +225,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         case Keyboard.CALL_A_VOLUNTEER -> {
                             logger.info("Позвали волонтёра - ID: {}", chatId);
                             sendMessage(chatId, "Мы направили ваш запрос волонтеру, скоро он с вами свяжется!");
-
-
+                            AnimalType type = owner.getOwnerType();
                             switch (type) {
                                 case CAT -> sendMessage(Constants.VOLUNTEER_CAT_SHELTER, "Напиши этому человеку: @" + username);
                                 case DOG -> sendMessage(Constants.VOLUNTEER_DOG_SHELTER, "Напиши этому человеку: @" + username);
@@ -232,6 +234,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                         case Keyboard.FAQ -> {
+                            AnimalType type = owner.getOwnerType();
                             logger.info("Часто задаваемые вопросы - ID:{}", chatId);
                             if (type.equals(AnimalType.CAT)) {
                                 replyMarkup.menuCat(chatId);
@@ -334,7 +337,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         replyMarkup.sendMessageStage(chatId);
     }
 
-    private void getReport(Message message) {
+    public void getReport(Message message) {
         PhotoSize photoSize = message.photo()[message.photo().length - 1];
         String caption = message.caption();
         Long chatId = message.chat().id();
@@ -361,7 +364,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         logger.info("Прилетел телефон - ID:{} тел:{} ", chatId, text);
     }
 
-    private void sendPhotoFromReportToVolunteer(Long reportId, Long volunteerChatId) {
+    public void sendPhotoFromReportToVolunteer(Long reportId, Long volunteerChatId) {
         GetFile getFile = new GetFile(reportService.getById(reportId).getPhotoId());
         GetFileResponse getFileResponse = telegramBot.execute(getFile);
         Report report = reportService.getById(reportId);
@@ -439,7 +442,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     @Scheduled(cron = "@daily")
-    private void sendTrialPeriodStatus() {
+    public void sendTrialPeriodStatus() {
         for (Owner owner : ownerService.getAll()) {
             for (TrialPeriod trialPeriod : trialPeriodService.findAllByOwnerId(owner.getId())) {
                 if (trialPeriod.getPeriodType().equals(TrialPeriodType.FAILED)) {
