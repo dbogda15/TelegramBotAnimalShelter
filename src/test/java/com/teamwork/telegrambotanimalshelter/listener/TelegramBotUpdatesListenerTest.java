@@ -34,6 +34,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -312,6 +313,100 @@ class TelegramBotUpdatesListenerTest {
         assertEquals(sentMessage.getParameters().get("text"), "Информация о собачьем приюте");
     }
 
+    @Test
+    void getReportToVolunteer(){
+        getCommand(Keyboard.SEND_REPORT_TO_VOLUNTEER);
+        var sentMessage = captor.getValue();
+        if (Objects.equals(chat.id(), Constants.VOLUNTEER_DOG_SHELTER) || Objects.equals(chat.id(), Constants.VOLUNTEER_CAT_SHELTER)) {
+            assertEquals(sentMessage.getParameters().get("text"), "Введи номер отчета (только цифры, без дополнительных символов)");
+        }
+        else {
+            assertEquals(sentMessage.getParameters().get("text"), "Здравствуйте! Данный функционал бота доступен только для волонтеров!");
+        }
+    }
+    @Test
+    void sendFAQMenuCat(){
+        when(owner.getOwnerType()).thenReturn(AnimalType.CAT);
+        getCommand(Keyboard.FAQ);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), "Все о кошках");
+    }
+
+    @Test
+    void sendFAQMenuDog(){
+        when(owner.getOwnerType()).thenReturn(AnimalType.DOG);
+        getCommand(Keyboard.FAQ);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), "Все о собаках");
+    }
+    @Test
+    void backToMenuCat(){
+        getCommand(Keyboard.BACK_TO_ALL_ABOUT_CATS);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), "Все о кошках");
+    }
+
+    @Test
+    void backToMenuDog(){
+        getCommand(Keyboard.BACK_TO_ALL_ABOUT_DOGS);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), "Все о собаках");
+    }
+
+    @Test
+    void recommendationsForCat(){
+        getCommand(Keyboard.RECOMMENDATIONS_FOR_CATS);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), Keyboard.RECOMMENDATIONS_FOR_CATS);
+    }
+
+    @Test
+    void recommendationsForDog(){
+        getCommand(Keyboard.RECOMMENDATIONS_FOR_DOGS);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), Keyboard.RECOMMENDATIONS_FOR_DOGS);
+    }
+
+    @Test
+    void mainMenuWhenOwnerTypeIsNull(){
+        when(owner.getAnimals()).thenReturn(Collections.emptyList());
+        owner.setOwnerType(null);
+        ownerService.update(owner);
+        getCommand(Keyboard.MAIN_MENU);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), Constants.WELCOME);
+    }
+
+    @Test
+    void mainMenuWhenOwnerTypeIsCat(){
+        when(ownerService.getByChatId(chat.id())).thenReturn(owner);
+        when(owner.getAnimals()).thenReturn(List.of(animal));
+        when(owner.getOwnerType()).thenReturn(AnimalType.CAT);
+        owner.setOwnerType(AnimalType.CAT);
+        ownerService.update(owner);
+        getCommandMainMenu(Keyboard.MAIN_MENU);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), """
+                                                На данный момент вы уже являетесь клиентом приюта для котов и не можете выйти в главное меню.
+                                                Если есть вопросы, обратитесь к волонтёру.
+                                                """);
+    }
+    @Test
+    void mainMenuWhenOwnerTypeIsDog(){
+        when(ownerService.getByChatId(chat.id())).thenReturn(owner);
+        when(owner.getAnimals()).thenReturn(List.of(animal));
+        when(owner.getOwnerType()).thenReturn(AnimalType.DOG);
+        owner.setOwnerType(AnimalType.DOG);
+        ownerService.update(owner);
+        getCommandMainMenu(Keyboard.MAIN_MENU);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), """
+                                                На данный момент вы уже являетесь клиентом приюта для собак и не можете выйти в главное меню.
+                                                Если есть вопросы, обратитесь к волонтёру.
+                                                """);
+    }
+
+
     private void getCommand(String command){
         when(telegramBot.execute(any())).thenReturn(sendResponse);
         when(update.message()).thenReturn(message);
@@ -326,4 +421,20 @@ class TelegramBotUpdatesListenerTest {
         listener.process(List.of(update));
         verify(telegramBot, times(1)).execute(captor.capture());
     }
+
+    private void getCommandMainMenu(String command){
+        when(telegramBot.execute(any())).thenReturn(sendResponse);
+        when(update.message()).thenReturn(message);
+        when(message.text()).thenReturn(command);
+        when(message.chat()).thenReturn(chat);
+        when(ownerRepository.getOwnerByChatId(chat.id())).thenReturn(owner);
+
+        if (ownerRepository.existsOwnerByChatId(chat.id())){
+            ownerService.create(new Owner(chat.id(), chat.firstName(), new ArrayList<>()));
+        }
+
+        listener.process(List.of(update));
+        verify(telegramBot, times(2)).execute(captor.capture());
+    }
+
 }
