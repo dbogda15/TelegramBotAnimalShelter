@@ -405,8 +405,25 @@ class TelegramBotUpdatesListenerTest {
                                                 Если есть вопросы, обратитесь к волонтёру.
                                                 """);
     }
+                     
+    @Test
+    void sendMenuCatList() {
+        when(shelterService.getByShelterType(AnimalType.CAT)).thenReturn(shelter);
+        shelter.setAnimalList(List.of(animal));
+        getCommand(Keyboard.LIST_OF_CATS);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), "Кошек нет");
+    }
 
-
+    @Test
+    void sendMenuDogList() {
+        when(shelterService.getByShelterType(AnimalType.DOG)).thenReturn(shelter);
+        shelter.setAnimalList(List.of(animal));
+        getCommand(Keyboard.LIST_OF_DOGS);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), "Собак нет");
+    }
+                     
     private void getCommand(String command){
         when(telegramBot.execute(any())).thenReturn(sendResponse);
         when(update.message()).thenReturn(message);
