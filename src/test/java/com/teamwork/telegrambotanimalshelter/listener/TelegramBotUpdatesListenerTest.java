@@ -287,12 +287,20 @@ class TelegramBotUpdatesListenerTest {
 
     }
 
-
     @Test
-    void sendMessageStageTest(){
+    void sendMessageStageTestCatShelter(){
         when(ownerService.getByChatId(any())).thenReturn(owner);
         owner.setOwnerType(AnimalType.CAT);
         getCommand(Keyboard.CAT_SHELTER);
+        var sentMessage = captor.getValue();
+        assertEquals(sentMessage.getParameters().get("text"), "Выберите приют:");
+    }
+
+    @Test
+    void sendMessageStageTestDogShelter(){
+        when(ownerService.getByChatId(any())).thenReturn(owner);
+        owner.setOwnerType(AnimalType.DOG);
+        getCommand(Keyboard.DOG_SHELTER);
         var sentMessage = captor.getValue();
         assertEquals(sentMessage.getParameters().get("text"), "Выберите приют:");
     }
