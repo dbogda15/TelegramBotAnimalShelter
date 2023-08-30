@@ -301,7 +301,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         case Keyboard.SEND_REPORT_TO_VOLUNTEER -> {
                             if (Objects.equals(chatId, Constants.VOLUNTEER_DOG_SHELTER) || Objects.equals(chatId, Constants.VOLUNTEER_CAT_SHELTER)){
                                 logger.info("Запрос на получение фотоотчёта - ID:{}", chatId);
-                                sendMessage(chatId, "Введи номер отчета (только цифры, без дополнительных символов)");
+                                sendMessage(chatId, "Введи номер отчета (в формате {Номер отчета:})");
                             }
                             else {
                                 logger.info("Запрос на получение фотоотчёта сторонним пользователем- ID:{}", chatId);
