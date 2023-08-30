@@ -28,7 +28,7 @@ public class ReplyMarkUp {
                 new KeyboardButton(Keyboard.CALL_A_VOLUNTEER),
                 new KeyboardButton(Keyboard.SEND_REPORT_TO_VOLUNTEER));
         replyKeyboardMarkup.addRow(new KeyboardButton(Keyboard.MAIN_MENU));
-        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Выберите приют:");
+        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Выберите:");
     }
 
     public void sendMenuCat(long chatId) {

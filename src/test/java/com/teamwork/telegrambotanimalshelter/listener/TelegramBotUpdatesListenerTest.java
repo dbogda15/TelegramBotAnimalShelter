@@ -293,7 +293,7 @@ class TelegramBotUpdatesListenerTest {
         owner.setOwnerType(AnimalType.CAT);
         getCommand(Keyboard.CAT_SHELTER);
         var sentMessage = captor.getValue();
-        assertEquals(sentMessage.getParameters().get("text"), "Выберите приют:");
+        assertEquals(sentMessage.getParameters().get("text"), "Выберите:");
     }
 
     @Test
@@ -302,7 +302,7 @@ class TelegramBotUpdatesListenerTest {
         owner.setOwnerType(AnimalType.DOG);
         getCommand(Keyboard.DOG_SHELTER);
         var sentMessage = captor.getValue();
-        assertEquals(sentMessage.getParameters().get("text"), "Выберите приют:");
+        assertEquals(sentMessage.getParameters().get("text"), "Выберите:");
     }
 
     @Test
