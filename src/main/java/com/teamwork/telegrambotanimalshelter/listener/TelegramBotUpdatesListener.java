@@ -226,11 +226,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             logger.info("Позвали волонтёра - ID: {}", chatId);
                             sendMessage(chatId, "Мы направили ваш запрос волонтеру, скоро он с вами свяжется!");
                             AnimalType type = owner.getOwnerType();
-                            switch (type) {
-                                case CAT -> sendMessage(Constants.VOLUNTEER_CAT_SHELTER, "Напиши этому человеку: @" + username);
-                                case DOG -> sendMessage(Constants.VOLUNTEER_DOG_SHELTER, "Напиши этому человеку: @" + username);
-                                default -> sendMessage(chatId, "К сожалению, мы не можем с вами связаться, напишите волонтеру самостоятельно. Спасибо! "
-                                            + Constants.VOLUNTEER_INVITE);
+
+                            if (username == null){
+                                sendMessage(chatId, "К сожалению, мы не можем с вами связаться, напишите волонтеру самостоятельно. Спасибо! " + Constants.VOLUNTEER_INVITE);
+                            } else {
+                                switch (type) {
+                                    case CAT -> sendMessage(Constants.VOLUNTEER_CAT_SHELTER, "Напиши этому человеку: @" + username);
+                                    case DOG -> sendMessage(Constants.VOLUNTEER_DOG_SHELTER, "Напиши этому человеку: @" + username);
+                                }
                             }
                         }
                         case Keyboard.FAQ -> {
